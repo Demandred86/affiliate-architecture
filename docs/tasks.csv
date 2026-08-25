@@ -1,0 +1,97 @@
+ID,Epic,Milestone,Title,Description,Dependencies,Priority,Estimated hours,Acceptance criteria,Validation steps,Double-check steps,Prompt/agent involved,Automation possible,Human action required,Status
+H-001,Human decisions,M2,Decide repository location (DN-01),Choose non-OneDrive path vs stay with sync exclusions,,P0,1,Written decision in ASSUMPTIONS; workspace path agreed,Confirm path in reply,Re-read OneDrive risk R1,none,No,Yes,PLANNED
+H-002,Human decisions,M2,Confirm local DB runtime (DN-02),Confirm PGlite for M2 or alternative,,P0,0.25,ADR-0004 accepted or replaced in writing,Reply confirms PGlite or Docker/hosted,Check docker still absent if choosing PGlite,none,No,Yes,PLANNED
+H-003,Human decisions,M2,Create private git remote (DN-03),GitHub or Cursor-hosted remote,H-001,P0,0.5,git remote -v non-empty; private,git remote -v,Confirm visibility private,none,Partial,Yes,PLANNED
+H-004,Human decisions,M2,Optional LLM provider keys (DN-04),Supply keys or keep mock-only,,P1,0.25,Decision recorded; keys never committed,Keys only in local .env if any,grep repo for sk- patterns empty,none,No,Yes,PLANNED
+M2-001,Foundation,M2,Relocate workspace if approved,Move/clone repo off OneDrive if DN-01 says so,H-001,P0,2,Project builds from agreed path; data/ not synced,pwd; git status,Confirm OneDrive not syncing node_modules,none,Partial,Yes,PLANNED
+M2-002,Foundation,M2,Scaffold npm workspaces,Root package.json workspaces for apps/packages/agents,M2-001,P0,2,npm install; workspaces listed,npm ls --depth=0,engines.node >=22,none,Yes,No,PLANNED
+M2-003,Foundation,M2,TypeScript strict ESM,tsconfig.base and project references,M2-002,P0,2,tsc -b succeeds,npm run typecheck,strict true in base config,none,Yes,No,PLANNED
+M2-004,Foundation,M2,Lint format gitattributes,"ESLint layer rules, Prettier, LF",M2-003,P0,1,lint script passes on empty pkgs,npm run lint,eol=lf in gitattributes,none,Yes,No,PLANNED
+M2-005,Foundation,M2,Vitest workspace,Shared vitest config and coverage hooks,M2-003,P0,1.5,npm test exits 0,npm test,coverage dir gitignored,none,Yes,No,PLANNED
+M2-006,Foundation,M2,Git hooks lint-staged,husky optional polish,M2-004,P2,1,pre-commit runs lint on staged,echo hook fires on dummy commit --dry,skip if hooks blocked by policy,none,Yes,No,PLANNED
+M2-007,Foundation,M2,CI test and secret scan,GitHub Actions npm ci + test + gitleaks/patterns,M2-005;M2-008,P1,2,CI green on default branch,Open CI run,Confirm no secrets in logs,none,Yes,Partial,PLANNED
+M2-008,Foundation,M2,Initial commit and push,First commit of scaffold; push if remote,M2-002;H-003,P0,0.5,Remote has commit; .env not in tree,git ls-files; git log -1,git check-ignore .env,none,Partial,Yes,PLANNED
+M2-010,Config,M2,packages/config loader,Load env files; export typed config,M2-003,P0,2,import config in cli bootstrap,unit: default mock provider,no secrets in thrown messages,none,Yes,No,PLANNED
+M2-011,Config,M2,Zod env validation,Fail closed if selected provider missing key,M2-010,P0,1.5,openai without key throws at boot,unit tests both paths,env.example lists names only,none,Yes,No,PLANNED
+M2-012,Config,M2,Budgets and flags,DAILY_BUDGET ALLOW_EXPENSIVE defaults,M2-011,P0,1,defaults: budget 1 USD expensive false,read parsed config in test,cannot enable expensive without flag,none,Yes,No,PLANNED
+M2-020,Logging,M2,pino JSON logger,stdout JSON; trace id,M2-003,P0,2,log line parses as JSON,capture stdout in test,level configurable,none,Yes,No,PLANNED
+M2-021,Logging,M2,audit_event writer,Persist state transitions,M2-036;M2-020,P0,1,status change writes audit row,insert keyword status; query audit,logs not used as only audit,none,Yes,No,PLANNED
+M2-022,Logging,M2,Log redaction,Redact key token password,M2-020,P0,1,fake key not in serialized log,unit redaction,try nested metadata,none,Yes,No,PLANNED
+M2-030,Database,M2,PGlite Drizzle bootstrap,packages/database drizzle + pglite,M2-010;H-002,P0,3,create client; apply empty migration,unit createTestDb,data dir gitignored,none,Yes,No,PLANNED
+M2-031,Database,M2,ase db migrate,CLI applies SQL migrations,M2-030,P0,1.5,second migrate is no-op,run migrate twice,journal table exists,none,Yes,No,PLANNED
+M2-032,Database,M2,Tables niche keyword alias,Core keyword identity tables,M2-031;M2-050,P0,2,unique canonical_hash,migrate; insert two dupes fail,FK niche required,none,Yes,No,PLANNED
+M2-033,Database,M2,Tables import_batch import_row,CSV provenance tables,M2-032,P0,1.5,batch row_count stored,insert batch,cannot assume 50 rows in schema,none,Yes,No,PLANNED
+M2-034,Database,M2,Tables facet cluster analysis,Analysis persistence,M2-032,P0,2,partial unique current analysis,insert two current fail,supersede works,none,Yes,No,PLANNED
+M2-035,Database,M2,Tables metric score,Hypothesis metrics and scores,M2-032,P0,1.5,metric provenance columns exist,insert HYPOTHESIS metric,score null iff INSUFFICIENT_DATA constraint,none,Yes,No,PLANNED
+M2-036,Database,M2,Tables agent_run prompt cost job,Runtime persistence,M2-032,P0,2,idempotency_key unique,duplicate key insert fails,cost >= 0,none,Yes,No,PLANNED
+M2-037,Database,M2,Tables task audit review proposal,Ops and future gates stubs,M2-032,P0,1.5,tables exist empty,migrate,no M3 serp tables,none,Yes,No,PLANNED
+M2-038,Database,M2,Indexes and checks,M2 indexes + integrity checks,M2-037,P0,1.5,illegal score/band rejected,constraint tests,explain not required,none,Yes,No,PLANNED
+M2-039,Database,M2,Seed niches facets scoring model,Gardening active; CSV aliases,M2-038,P0,1.5,Lawn & Garden maps to gardening,seed; query alias,other niches PARKED,none,Yes,No,PLANNED
+M2-040,Database,M2,Repositories,Typed access no raw SQL outside package,M2-038;M2-020,P0,3,importKeyword repo idempotent,repo tests,lint no sql in agents,none,Yes,No,PLANNED
+M2-041,Database,M2,createTestDb harness,Isolated PGlite per test,M2-040,P0,2,tests do not share rows,two tests insert independently,truncate or new db each test,none,Yes,No,PLANNED
+M2-042,Database,M2,Postgres parity optional,Same migrations on DATABASE_URL,M2-031,P1,2,script documented; skip if no URL,run if URL set else skip,compare enum support,none,Partial,Yes if no Postgres,PLANNED
+M2-050,Schemas,M2,Provenance Zod primitives,withProvenance fields,M2-003,P0,1.5,MEASURED vs HYPOTHESIS enum,schema unit tests,reject unknown source_type,none,Yes,No,PLANNED
+M2-051,Schemas,M2,Import keyword Zod,CSV row and keyword types,M2-050,P0,1.5,44-row file parses conceptually,fixture parse,extra keys strip or reject per spec,none,Yes,No,PLANNED
+M2-052,Schemas,M2,KeywordAnalysis Zod,Agent output contract no volume fields,M2-050,P0,1.5,volume field would fail extra key,parse fixture; reject volume,relatedCandidates origin enum,keyword,Yes,No,PLANNED
+M2-053,Schemas,M2,Report JSON Zod,schemaVersion 1.0.0,M2-052,P0,1,report fixture validates,parse golden,breaking change bumps version,none,Yes,No,PLANNED
+M2-054,Schemas,M2,AppError codes,Stable error taxonomy,M2-050,P0,0.5,BUDGET_EXCEEDED code exists,enum test,docs list codes,none,Yes,No,PLANNED
+M2-060,AI provider,M2,AIProvider interface,complete() tokens model,M2-011;M2-050,P0,1.5,no vendor import in interface file,tsc,agents depend on interface,none,Yes,No,PLANNED
+M2-061,AI provider,M2,MockProvider,Fixture map by input hash $0,M2-060,P0,2,returns fixture JSON; cost 0,unit,unknown hash fails closed,none,Yes,No,PLANNED
+M2-062,AI provider,M2,OpenAI adapter,Optional; disabled without key,M2-060,P1,2,no key => adapter unused,boot test,live call not in CI,none,Yes,Key optional,PLANNED
+M2-063,AI provider,M2,Anthropic adapter,Optional; disabled without key,M2-060,P1,2,same as OpenAI,boot test,live call not in CI,none,Yes,Key optional,PLANNED
+M2-064,AI provider,M2,Model price table,Dated prices; unknown => cost null,M2-060,P1,1,unknown model cost UNAVAILABLE not guessed,unit,comment retrieved-at date,none,Yes,No,PLANNED
+M2-065,AI provider,M2,Budget guard,Daily and per-run caps,M2-012;M2-060,P0,1.5,exceed => BUDGET_EXCEEDED no call,unit mock remaining 0,expensive flag blocks strong model,none,Yes,No,PLANNED
+M2-066,AI provider,M2,cost_event persistence,Ledger rows per call,M2-036;M2-065,P0,1,sum matches runs,insert; sum query,deterministic writes 0,none,Yes,No,PLANNED
+M2-070,Agent core,M2,AgentRunner,Validate I/O persist run,M2-040;M2-060;M2-020,P0,3,invalid output not written as success,contract test,trace_id on run,keyword,Yes,No,PLANNED
+M2-071,Agent core,M2,Retry and JSON repair,429 retry; one schema repair,M2-070,P1,1.5,one repair then INVALID_OUTPUT,mock invalid then valid,no infinite loop,keyword,Yes,No,PLANNED
+M2-072,Agent core,M2,Idempotency cache,idempotency_key short-circuit,M2-070,P0,1.5,second run CACHED,two runs same input,force flag bypasses,keyword,Yes,No,PLANNED
+M2-073,Agent core,M2,Prompt registry,Hash files into agent_prompt,M2-036;M2-070,P1,1.5,content immutable,insert twice same version,change needs new version,keyword,Yes,No,PLANNED
+M2-074,Agent core,M2,In-process JobQueue,Persist job rows sequential,M2-036,P0,2,pipeline uses queue,crash resume test optional,no redis import,none,Yes,No,PLANNED
+M2-075,Agent core,M2,Persist agent_run always,Including deterministic path,M2-070;M2-036,P0,1.5,grammar run has model=deterministic,query after analyze,tokens 0,keyword,Yes,No,PLANNED
+M2-076,Agent core,M2,Map failures to status enum,Guardrail codes stored,M2-070,P0,0.5,FABRICATED_EXPERIENCE persists,unit,no generic FAILED for fabrications,keyword,Yes,No,PLANNED
+M2-080,Guardrails,M2,Banned experience phrases,Configurable list,M2-050,P0,1,we tested rejected,unit list,elderly kneeler allowed without we tested,keyword,Yes,No,PLANNED
+M2-081,Guardrails,M2,Numeric fabrication detector,Numbers must appear in input,M2-050,P0,1.5,12345 rejected,unit,enum ordinals allowed if listed,keyword,Yes,No,PLANNED
+M2-082,Guardrails,M2,Untrusted input wrapping,CSV text delimited for LLM,M2-080,P1,1,wrapper helper used on fallback path,code review + unit,injection string not executed as instr,keyword,Yes,No,PLANNED
+M2-083,Guardrails,M2,Experience claim fixtures,Fixture pack for phrases,M2-080,P0,1,all banned phrases covered,param tests,synonyms documented,keyword,Yes,No,PLANNED
+M2-090,Keyword import,M2,Spec-compliant CSV parser,Quotes commas LF,M2-051,P0,2,quoted comma fixture splits 7 cols,unit,semicolon reasons still 7 cols,none,Yes,No,PLANNED
+M2-091,Keyword import,M2,Import command,File to batch rows keywords,M2-090;M2-040,P0,2.5,44 accepted from M1 file,ase import,row_count=44 not 50,none,Yes,No,PLANNED
+M2-092,Keyword import,M2,Normalise and dedupe,canonical_hash,M2-091,P0,1.5,duplicate line DUPLICATE status,fixture dupes,case fold,none,Yes,No,PLANNED
+M2-093,Keyword import,M2,Niche alias mapping,Lawn & Garden -> gardening,M2-039;M2-091,P0,1,10 keywords active niche,query after import,tools niche parked,none,Yes,No,PLANNED
+M2-094,Keyword import,M2,Hypothesis metrics from CSV,m1_* metrics HYPOTHESIS,M2-091;M2-035,P0,1.5,opportunity_score not MEASURED,query metric source_type,research_priority stored not scored,none,Yes,No,PLANNED
+M2-095,Keyword import,M2,File SHA-256 on batch,Idempotent same bytes,M2-091,P0,0.5,matches known hash or recorded,print sha,second import no new keywords,none,Yes,No,PLANNED
+M2-096,Keyword import,M2,Reject malformed rows,PARTIAL batch,M2-091,P0,1.5,bad row REJECTED others kept,fixture extra column,never silent drop,none,Yes,No,PLANNED
+M2-100,Keyword agent,M2,Wire keyword agent contract,id version I/O schemas,M2-052;M2-070,P0,1,registered in CLI,boot registry,no volume in output type,keyword,Yes,No,PLANNED
+M2-101,Keyword agent,M2,Pattern grammar,BEST_X_FOR_Y and BEST_ATTRIBUTE_X,M2-100,P0,2.5,3 no-for keywords classified,unit 44 patterns sample,do not require for token,keyword,Yes,No,PLANNED
+M2-102,Keyword agent,M2,Facet lexicon,small-hands beginners etc,M2-039;M2-100,P0,2,shared slug across niches,unit small hands two kws,synonyms match,keyword,Yes,No,PLANNED
+M2-103,Keyword agent,M2,Intent and slot assignment,USER PROBLEM ENVIRONMENT CONSTRAINT,M2-102,P0,2,elderly -> USER not medical claim,unit kneeler,raised beds ENVIRONMENT,keyword,Yes,No,PLANNED
+M2-104,Keyword agent,M2,Clustering facet-overlap-v1,Tomato support cluster,M2-103,P0,2,trellis+support same cluster,query members,no cross-niche clusters,keyword,Yes,No,PLANNED
+M2-105,Keyword agent,M2,Related keyword candidates,Templates no volumes,M2-104,P0,1.5,candidates strings only,schema parse,origin TEMPLATE,keyword,Yes,No,PLANNED
+M2-106,Keyword agent,M2,LLM fallback low confidence,Cheap model JSON,M2-061;M2-101,P1,2.5,OTHER pattern may call mock,test with OTHER fixture,guardrails still apply,keyword,Yes,No,PLANNED
+M2-107,Keyword agent,M2,Persist KeywordAnalysis,DB write + supersede,M2-034;M2-100,P0,1.5,one current analysis per keyword,re-analyze supersedes,agent_run_id set,keyword,Yes,No,PLANNED
+M2-108,Keyword agent,M2,Keyword agent tests,Ten gardening without LLM,M2-101,P0,2.5,10/10 deterministic,vitest agents/keyword,include lightweight,keyword,Yes,No,PLANNED
+M2-110,Scoring,M2,opportunity-v1 formula,Weights in SCORING.md,M2-107,P0,2,scores 0-100 provisional bands,unit formula,no M1 blend,scoring,Yes,No,PLANNED
+M2-111,Scoring,M2,Declare missing_inputs,Always volume kd serp aov,M2-110,P0,1,array non-empty M2,assert includes search_volume,completeness 0.40,scoring,Yes,No,PLANNED
+M2-112,Scoring,M2,M1 columns side by side,Display only,M2-094;M2-110,P0,0.5,report has m1_opportunity_score,JSON keys,label hypothesis in MD,scoring,Yes,No,PLANNED
+M2-113,Scoring,M2,Persist keyword_score,model_id opportunity-v1,M2-035;M2-110,P0,1,one current score per keyword,query,version 1.0.0,scoring,Yes,No,PLANNED
+M2-114,Scoring,M2,Scoring tests,Property: M1 change no v1 change,M2-110,P0,1.5,property test passes,vitest packages/scoring,OTHER scores lower,scoring,Yes,No,PLANNED
+M2-115,Scoring,M2,Score model version stamp,Immutable version on row,M2-113,P0,0.5,model_version stored,query,new version new rows,scoring,Yes,No,PLANNED
+M2-120,CLI and report,M2,CLI import analyze score,Three commands wired,M2-091;M2-107;M2-113,P0,2,each command exits 0 on fixture,manual --help,errors nonzero,none,Yes,No,PLANNED
+M2-121,CLI and report,M2,pipeline command,Import analyze score report,M2-120;M2-074,P0,1.5,one command end-to-end,ase pipeline,partial import exit 1,none,Yes,No,PLANNED
+M2-122,CLI and report,M2,Report JSON MD CSV,reports/runId artefacts,M2-053;M2-121,P0,2.5,three files written,ls reports,MD has no we tested,none,Yes,No,PLANNED
+M2-123,CLI and report,M2,Golden report fixture,Clock frozen comparison,M2-122,P0,1.5,CI compares canonical JSON,vitest integration,update golden only with reason,none,Yes,No,PLANNED
+M2-124,CLI and report,M2,README usage,How to run pipeline,M2-121,P1,1,README matches commands,read README,PowerShell examples work,none,Yes,No,PLANNED
+M2-130,Test program,M2,Unit test sweep,Fill remaining agent units,M2-108,P1,1,coverage on keyword pkg,npm test,no skipped critical tests,keyword,Yes,No,PLANNED
+M2-131,Test program,M2,Schema contract tests,Zod extra keys,M2-052,P0,1.5,volume key rejected,vitest schemas,report schemaVersion,none,Yes,No,PLANNED
+M2-132,Test program,M2,Hallucination tests,Guardrail pack,M2-081;M2-083,P0,1.5,fabrication statuses set,vitest guardrails,not retried as success,keyword,Yes,No,PLANNED
+M2-133,Test program,M2,Fixture pack,malformed CSV missing cols,M2-096,P1,2,fixtures documented,run import fixtures,contradictory later M4 noted,none,Yes,No,PLANNED
+M2-134,Test program,M2,Integration pipeline test,Full M1 file in test db,M2-121;M2-041,P0,2.5,10 report keywords,vitest tests/integration,cost 0,none,Yes,No,PLANNED
+M2-135,Test program,M2,Idempotency double-run,Canonical JSON equal,M2-134,P0,1,second run cached,integration,ids stable,none,Yes,No,PLANNED
+M2-136,Test program,M2,Coverage gate,Threshold ratchet P2,M2-005,P2,0.5,threshold in config,ci coverage,do not game with excludes,none,Yes,No,PLANNED
+M2-137,Test program,M2,Budget and API failure tests,429 and budget,M2-065,P1,1.5,no throw loop,unit,status BUDGET_EXCEEDED,none,Yes,No,PLANNED
+M2-140,Task sync,M2,ase tasks sync,CSV to task table,M2-037,P1,1.5,row count matches csv,ase tasks list,ids unique,none,Yes,No,PLANNED
+M2-141,Task sync,M2,Checksum CSV vs table,Drift fails CI,M2-140,P1,1,mismatch nonzero exit,edit csv fail test,docs note SI-06,none,Yes,No,PLANNED
+M2-142,Task sync,M2,CONTRIBUTING and env.example,Operator docs,M2-011,P1,1,env.example complete names,diff vs config schema,no real secrets,none,Yes,No,PLANNED
+M2-150,Closeout,M2,Execute RUNBOOK verification,V1-V14,M2-134,P0,2,all V steps recorded pass,follow RUNBOOK.md §3,attach outputs to closeout,none,Partial,Yes,PLANNED
+M2-151,Closeout,M2,Execute RUNBOOK double-check,D1-D10,M2-150,P0,1.5,all D steps pass,RUNBOOK.md §5,independent of V commands,none,Partial,Yes,PLANNED
+M2-152,Closeout,M2,Milestone closeout report,Spec §34 fields,M2-151,P0,1,written closeout in docs or chat,checklist §34,no M3 started,none,Partial,Yes,PLANNED
+M2-153,Closeout,M2,Stop wait for M3 approval,Hard stop,M2-152,P0,0.5,no M3 PRs,git log,user approval recorded,none,No,Yes,PLANNED

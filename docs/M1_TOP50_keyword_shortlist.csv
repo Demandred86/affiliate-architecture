@@ -1,0 +1,45 @@
+rank,niche,keyword,opportunity_score,serp_opportunity,reason,research_priority
+1,Lawn & Garden,best pruning shears for small hands,88,High,Strong long-tail intent; multiple smaller affiliate pages; major publishers also compete,Y
+2,Lawn & Garden,best soil tester for vegetable garden,87,High,Specific commercial intent; several affiliate-style pages; strong product comparison potential,Y
+3,Lawn & Garden,best garden tools for raised beds,86,High,Very specific use case; Amazon affiliate content already exists; easy product clustering,Y
+4,Lawn & Garden,best trellis for tomatoes,85,High,Clear buyer intent and many product types; SERP has smaller sites plus strong publishers,Y
+5,Lawn & Garden,best plant support for tomatoes,84,High,Problem-solving intent; strong product fit and many related products,Y
+6,Lawn & Garden,best garden hose for small garden,83,Medium,Clear use case but tested publisher competition is significant,Y
+7,Lawn & Garden,best hose reel for small garden,82,Medium,Specific space/storage problem; good commercial fit,Y
+8,Lawn & Garden,best lightweight garden tools,81,Medium,Strong user constraint; product basket potential,Y
+9,Lawn & Garden,best garden tools for beginners,80,Medium,Large topic cluster but broader intent and more competition,Y
+10,Lawn & Garden,best garden kneeler for elderly,79,Medium,Strong problem/benefit intent; product fit; requires careful non-medical wording,Y
+11,Tools / Home Improvement,best impact driver for beginners,86,High,Commercial SERP with specialized tool sites; clear intent and product ecosystem,Y
+12,Tools / Home Improvement,best cordless drill for cabinet installation,85,High,Highly specific job intent; good product value,Y
+13,Tools / Home Improvement,best drill for small hands,84,High,Strong user constraint; less generic than drill queries,Y
+14,Tools / Home Improvement,best impact driver for cabinet work,83,High,Specific application; overlaps naturally with accessory clusters,Y
+15,Tools / Home Improvement,best compact impact driver,82,Medium,Good product intent but YouTube/testing competition is substantial,Y
+16,Tools / Home Improvement,best cordless drill for furniture assembly,81,Medium,Clear task intent and consumer audience,Y
+17,Tools / Home Improvement,best drill for DIY beginners,80,Medium,Good audience but broader SERP,Y
+18,Tools / Home Improvement,best lightweight cordless drill,79,Medium,Useful constraint and strong product match,Y
+19,Tools / Home Improvement,best oscillating tool for beginners,78,Medium,Commercial niche with educational opportunity,Y
+20,Tools / Home Improvement,best drill for apartment repairs,77,Medium,Good micro-intent; potentially lower volume,Y
+21,Automotive Accessories,best OBD2 scanner for beginners,84,High,Strong product intent; established testing publishers mean differentiation is needed,Y
+22,Automotive Accessories,best car vacuum for pet hair,83,High,Specific problem and high commercial intent,Y
+23,Automotive Accessories,best tire inflator for SUV,82,High,Problem-solving product query; strong buyer intent,Y
+24,Automotive Accessories,best jump starter for SUV,81,High,High-value product and clear use case,Y
+25,Automotive Accessories,best dash cam for beginners,80,Medium,Commercial but crowded with major publishers,Y
+26,Automotive Accessories,best car vacuum for small car,78,Medium,Specific environment; good fit for long-tail,Y
+27,Automotive Accessories,best car organizer for SUV,77,Medium,Product + vehicle use case; potentially strong basket,Y
+28,Automotive Accessories,best car phone mount for SUV,76,Medium,Good intent but compatibility needs careful research,Y
+29,Outdoor / Camping,best camping tent for car camping,82,Medium,Strong commercial intent but established outdoor publishers compete,Y
+30,Outdoor / Camping,best sleeping bag for cold weather,81,Medium,Large market; difficult broad SERP,Y
+31,Outdoor / Camping,best camping chair for tall people,80,High,Strong user constraint and product differentiation,Y
+32,Outdoor / Camping,best camping stove for beginners,79,Medium,Commercial + educational intent,Y
+33,Outdoor / Camping,best camping cooler for car camping,78,Medium,Clear use case and product value,Y
+34,Outdoor / Camping,best camping mattress for couples,77,Medium,Specific buyer need and reasonable product value,Y
+35,Outdoor / Camping,best camping fan for tent,76,Medium,Good problem-solving intent; potentially lower volume,Y
+36,Outdoor / Camping,best portable power station for camping,75,Medium,High AOV but strong competition,Y
+37,Kitchen Micro-Niche,best air fryer for one person,78,Medium,Very large product market; crowded SERP,Y
+38,Kitchen Micro-Niche,best air fryer for small kitchen,77,Medium,Clear constraint but strong publisher competition,Y
+39,Kitchen Micro-Niche,best blender for small kitchen,76,Medium,Good product fit; competitive,Y
+40,Kitchen Micro-Niche,best coffee grinder for beginners,75,Medium,Commercial intent; strong review ecosystem,Y
+41,Kitchen Micro-Niche,best rice cooker for one person,74,Medium,Specific audience and product intent,Y
+42,Kitchen Micro-Niche,best kitchen scale for beginners,72,Medium,Lower AOV reduces revenue potential,Y
+43,Kitchen Micro-Niche,best food processor for small kitchen,71,Medium,Good constraint but crowded,Y
+44,Kitchen Micro-Niche,best electric kettle for small kitchen,70,Medium,Good long-tail but lower AOV,Y
