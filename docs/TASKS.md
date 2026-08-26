@@ -163,3 +163,12 @@ A = still required, **folded into M2-L*** (do not execute the old ticket as a se
 ## 6. Verification template
 
 A task is `DONE` only with its CSV **validation** and **double-check** both executed.
+
+## 7. Completion records
+
+- **2026-08-26 — M2-L01 DONE:** Installed npm workspaces; verified Node `>=22`, strict ESM build/typecheck, CLI help, LF policy, ignored `node_modules`, and green root tests.
+- **2026-08-26 — M2-L02 DONE:** Verified no-env defaults for all three budget caps, `MAX_PROJECT_BUDGET_USD` in `.env.example`, no vendor keys, and `git check-ignore .env`.
+- **2026-08-26 — M2-L03 DONE:** Verified one captured pipeline log is valid JSON with `trace_id`, while a sample API key is redacted; no audit/observability additions.
+- **2026-08-26 — M2-L04 DONE:** Verified strict provenance/import/analysis/score/report contracts, `HYPOTHESIS`, canonical `M1_HYPOTHESIS_SCORE`, and rejection of `search_volume`.
+- **2026-08-26 — M2-L05 DONE:** Applied the sole PGlite migration; verified exactly 16 lean tables, no excluded tables, the gardening alias, one active niche, and four parked niches.
+- **2026-08-26 — M2-L06 DONE:** Verified typed repositories, per-test isolated PGlite databases, idempotent canonical insertion, and database-level unique-hash rejection; no agents package or agent SQL exists.

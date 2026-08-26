@@ -1,0 +1,26 @@
+{
+  "name": "automated-seo-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "ase": "./apps/cli/dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p apps/cli/tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
