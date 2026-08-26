@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
 const nonNegativeUsd = (defaultValue: number) =>
   z.coerce.number().finite().nonnegative().default(defaultValue);
@@ -8,7 +10,7 @@ export const configSchema = z
     DAILY_BUDGET_USD: nonNegativeUsd(1),
     MAX_COST_PER_RUN_USD: nonNegativeUsd(0.05),
     MAX_PROJECT_BUDGET_USD: nonNegativeUsd(5),
-    DATABASE_PATH: z.string().min(1).default("data/pglite"),
+    DATABASE_PATH: z.string().min(1),
     LOG_LEVEL: z
       .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
       .default("info"),
@@ -27,8 +29,21 @@ export const configSchema = z
 
 export type AppConfig = z.infer<typeof configSchema>;
 
+export function defaultDatabasePath(
+  environment: NodeJS.ProcessEnv = process.env,
+): string {
+  const dataHome =
+    environment.LOCALAPPDATA ??
+    environment.XDG_DATA_HOME ??
+    join(homedir(), ".local", "share");
+  return join(dataHome, "ase", "pglite");
+}
+
 export function loadConfig(
   environment: NodeJS.ProcessEnv = process.env,
 ): AppConfig {
-  return configSchema.parse(environment);
+  return configSchema.parse({
+    ...environment,
+    DATABASE_PATH: environment.DATABASE_PATH ?? defaultDatabasePath(environment),
+  });
 }

@@ -49,7 +49,7 @@ npx ase pipeline --file docs/M1_TOP50_keyword_shortlist.csv --niche problem-solv
 
 1. Exit code 0.
 2. `npm test` green (unit + one integration pipeline).
-3. Database has **44** keywords; report lists **exactly 10** gardening first-batch keywords.
+3. Database has **44** keywords; JSON, CSV, and Markdown reports each list **exactly 10** gardening first-batch keywords.
 4. Each of the 10 has `keyword_analysis` (`BEST_X_FOR_Y` or `BEST_ATTRIBUTE_X` for `best lightweight garden tools`).
 5. Each of the 10 has `keyword_score.score_kind = OPPORTUNITY_SCORE` with `missing_inputs` containing `search_volume`.
 6. Each of the 10 has `keyword_metric` `M1_HYPOTHESIS_SCORE` with **`source_type = HYPOTHESIS`**.
@@ -81,7 +81,7 @@ Human review of PRs: unpriced.
 
 ## 7. Deferred / removed (summary)
 
-See [TASKS.md](./TASKS.md) B/C/D. Includes: CI beyond `npm test`, Docker, Redis, HTTP, Next.js, OpenAI/Anthropic/Mock LLM, PG parity, task-DB sync, JobQueue, `audit_event`, golden CSV report, coverage ratchet, LLM fallback.
+See [TASKS.md](./TASKS.md) B/C/D. Includes: CI beyond `npm test`, Docker, Redis, HTTP, Next.js, OpenAI/Anthropic/Mock LLM, PG parity, task-DB sync, JobQueue, `audit_event`, frozen golden-byte snapshots, coverage ratchet, LLM fallback.
 
 ## 8. Stop
 

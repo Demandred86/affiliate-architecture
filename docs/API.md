@@ -21,8 +21,8 @@ Global flags: `--env-file`, `--json-logs`, `--dry-run`, `--force`.
 | `ase import --file <path>` | CSV → import_batch/rows/keywords/metrics | 0 complete, 1 partial, 2 failed |
 | `ase analyze [--niche slug] [--keyword-id]` | Keyword agent (deterministic) | 0/1/2 |
 | `ase score [--niche slug]` | `OPPORTUNITY_SCORE` v1 | 0/2 |
-| `ase report [--niche slug] --out <dir>` | JSON + Markdown | 0/2 |
-| `ase pipeline --file <path> [--niche slug] --out <dir>` | import→analyze→score→report | 0/1/2 |
+| `ase pipeline --file <path> [--niche slug] [--out <dir>]` | import→analyze→score→JSON/CSV/Markdown | 0/1/2 |
+| `npm run pipeline -- import-and-score <path>` | Ergonomic equivalent of the pipeline command | 0/1/2 |
 
 No `ase tasks sync`. `pipeline` is the M2 acceptance entrypoint. Idempotent without `--force`.
 
@@ -31,12 +31,10 @@ No `ase tasks sync`. `pipeline` is the M2 acceptance entrypoint. Idempotent with
 `reports/<runId>/` (gitignored):
 
 - `m2-keyword-report.json`
+- `m2-keyword-report.csv`
 - `m2-keyword-report.md`
-- `m2-run-manifest.json` (file SHA-256, versions, total cost)
 
-CSV spreadsheet export is **deferred**.
-
-JSON must distinguish `opportunity_score` (`OPPORTUNITY_SCORE`) from `m1_hypothesis_score` (`M1_HYPOTHESIS_SCORE`, hypothesis). `serp_score` is absent/`UNAVAILABLE`. `cost.total_estimated_cost_usd` is `0`. `llm_calls` is `0`.
+All three formats distinguish `PROVISIONAL_OPPORTUNITY_SCORE` (`score_kind=OPPORTUNITY_SCORE`) from `M1_HYPOTHESIS_SCORE` (`source_type=HYPOTHESIS`). No measured search volume, traffic, or live SERP claim is emitted. `total_estimated_cost_usd` is `0`; `llm_calls` is `0`.
 
 Versioning: `schemaVersion` on report JSON. Frozen golden-byte tests are deferred; integration asserts structure and counts.
 

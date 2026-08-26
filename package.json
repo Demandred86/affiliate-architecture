@@ -14,12 +14,15 @@
     "ase": "./apps/cli/dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p apps/cli/tsconfig.json",
+    "build": "tsc -p tsconfig.json && esbuild apps/cli/src/index.ts --bundle --platform=node --format=esm --outfile=apps/cli/dist/index.js --external:@electric-sql/pglite --external:drizzle-orm --external:drizzle-orm/* --external:uuid --external:zod --external:csv-parse/* --external:csv-stringify/*",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "ase": "node apps/cli/dist/index.js",
+    "pipeline": "npm run build --silent && node apps/cli/dist/index.js pipeline"
   },
   "devDependencies": {
     "@types/node": "latest",
+    "esbuild": "latest",
     "typescript": "latest",
     "vitest": "latest"
   }

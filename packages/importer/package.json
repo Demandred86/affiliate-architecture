@@ -1,0 +1,15 @@
+{
+  "name": "@ase/importer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ase/database": "*",
+    "csv-parse": "latest",
+    "drizzle-orm": "latest",
+    "uuid": "latest"
+  }
+}

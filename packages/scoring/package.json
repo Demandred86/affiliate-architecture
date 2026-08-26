@@ -1,19 +1,19 @@
 {
-  "name": "@ase/cli",
+  "name": "@ase/scoring",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "bin": {
-    "ase": "./dist/index.js"
+  "exports": {
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@ase/agent-core": "*",
-    "@ase/config": "*",
     "@ase/database": "*",
     "@ase/importer": "*",
     "@ase/keyword-agent": "*",
-    "@ase/pipeline": "*",
-    "@ase/scoring": "*",
-    "@electric-sql/pglite": "latest"
+    "@ase/schemas": "*",
+    "drizzle-orm": "latest",
+    "uuid": "latest",
+    "zod": "latest"
   }
 }

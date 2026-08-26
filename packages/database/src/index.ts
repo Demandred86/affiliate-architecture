@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import * as schema from "./schema.js";
@@ -15,7 +16,20 @@ export function createDatabase(client: PGlite): Database {
 
 export async function migrate(client: PGlite): Promise<void> {
   const migrationUrl = new URL("../drizzle/0000_lean_m2.sql", import.meta.url);
-  const migration = await readFile(migrationUrl, "utf8");
+  const migration = await readFile(migrationUrl, "utf8").catch((error: unknown) => {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ) {
+      return readFile(
+        join(process.cwd(), "packages", "database", "drizzle", "0000_lean_m2.sql"),
+        "utf8",
+      );
+    }
+    throw error;
+  });
   await client.exec(migration);
 }
 

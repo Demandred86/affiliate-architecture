@@ -10,6 +10,8 @@ describe("config", () => {
       MAX_COST_PER_RUN_USD: 0.05,
       MAX_PROJECT_BUDGET_USD: 5,
     });
+    expect(config.DATABASE_PATH).not.toBe("data/pglite");
+    expect(config.DATABASE_PATH.replaceAll("\\", "/")).toMatch(/\/ase\/pglite$/);
   });
 
   it("rejects invalid and inconsistent caps", () => {

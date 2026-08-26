@@ -108,7 +108,7 @@ Findings and their design consequences:
 | SI-04 | §8 | "Prisma or Drizzle". | Drizzle. Prisma's `migrate dev` requires a live shadow database, which is impossible without Docker/Postgres on this machine. See [ADR-0003](./ADR/ADR-0003-drizzle-over-prisma.md). |
 | SI-05 | §9 / §23 | Prompts vs deterministic. | M2: **deterministic path only**. LLM fallback is deferred. `agent_prompt` still records version/hash. |
 | SI-06 | §25 | TASKS.md + tasks.csv + DB. | **M2: markdown + CSV only.** No `task` table. |
-| SI-07 | §31 | IMPORT → REPORT. | Single `pipeline` command, idempotent, **offline**, JSON + Markdown report (CSV report deferred). Primary acceptance test in [M2_PLAN.md](./M2_PLAN.md). |
+| SI-07 | §31 | IMPORT → REPORT. | Single `pipeline` command, idempotent, **offline**, with JSON + CSV + Markdown reports. Primary acceptance test in [M2_PLAN.md](./M2_PLAN.md). |
 | SI-08 | §29 | M2 vs keyword agent. | Keyword analysis + scoring are in M2; SERP is M3. |
 
 ## 7. Explicitly out of scope for M2

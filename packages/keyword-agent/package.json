@@ -1,0 +1,19 @@
+{
+  "name": "@ase/keyword-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ase/agent-core": "*",
+    "@ase/database": "*",
+    "@ase/guardrails": "*",
+    "@ase/importer": "*",
+    "@ase/schemas": "*",
+    "drizzle-orm": "latest",
+    "uuid": "latest",
+    "zod": "latest"
+  }
+}

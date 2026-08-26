@@ -1,0 +1,16 @@
+{
+  "name": "@ase/agent-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ase/config": "*",
+    "@ase/database": "*",
+    "drizzle-orm": "latest",
+    "uuid": "latest",
+    "zod": "latest"
+  }
+}

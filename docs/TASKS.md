@@ -1,6 +1,6 @@
 # TASKS — LEAN M2 MVP
 
-Status: **Architecture approved. Implementation not started.**
+Status: **M2-L01–L14 complete. M2-L15 closeout not started.**
 Date: 2026-08-25
 Authoritative executable list: [tasks.csv](./tasks.csv)
 Old-ticket mapping: [M2_TASK_RECLASS.csv](./M2_TASK_RECLASS.csv)
@@ -133,7 +133,7 @@ A = still required, **folded into M2-L*** (do not execute the old ticket as a se
 | M2-115 | A | → L12 |
 | M2-120 | A | → L13 |
 | M2-121 | A | → L13 |
-| M2-122 | A | → L13 JSON+MD (CSV report B) |
+| M2-122 | A | → L13 JSON+CSV+Markdown |
 | M2-123 | B | Frozen golden bytes |
 | M2-124 | A | Minimal README in L01/L13 |
 | M2-130 | B | Extra unit sweep |
@@ -154,7 +154,7 @@ A = still required, **folded into M2-L*** (do not execute the old ticket as a se
 
 ## 5. B / C / D themes (do not implement in M2)
 
-**B:** OneDrive move, git remote, ESLint suite, GitHub Actions, Postgres parity, Mock/AIProvider package, JobQueue, audit table, CSV report + golden files, extra fixtures, CONTRIBUTING, LLM wrapping.
+**B:** OneDrive move, git remote, ESLint suite, GitHub Actions, Postgres parity, Mock/AIProvider package, JobQueue, audit table, frozen golden-byte files, extra fixtures, CONTRIBUTING, LLM wrapping.
 
 **C:** OpenAI/Anthropic, SERP, products, writer, WordPress, Next.js, Redis, HTTP API, Docker-required flow, `human_review`/`change_proposal` tables, LLM fallback.
 
@@ -172,3 +172,11 @@ A task is `DONE` only with its CSV **validation** and **double-check** both exec
 - **2026-08-26 — M2-L04 DONE:** Verified strict provenance/import/analysis/score/report contracts, `HYPOTHESIS`, canonical `M1_HYPOTHESIS_SCORE`, and rejection of `search_volume`.
 - **2026-08-26 — M2-L05 DONE:** Applied the sole PGlite migration; verified exactly 16 lean tables, no excluded tables, the gardening alias, one active niche, and four parked niches.
 - **2026-08-26 — M2-L06 DONE:** Verified typed repositories, per-test isolated PGlite databases, idempotent canonical insertion, and database-level unique-hash rejection; no agents package or agent SQL exists.
+- **2026-08-26 — M2-L07 DONE:** Added the deterministic-only `AgentRunner`, immutable hashed prompt versions, persisted run provenance, and idempotent reuse. Validation ran the runner twice and proved one execution/row with `model=deterministic` and zero tokens. Estimate: 2.5h; actual effort: moderate and in line with the estimate.
+- **2026-08-26 — M2-L08 DONE:** Added fail-closed per-run, UTC-daily, and lifetime-project budget checks (including `MAX_PROJECT_BUDGET_USD`) plus one zero-dollar `cost_event` per deterministic execution. Validation proved all three zero-remaining refusals and a summed deterministic cost of 0. Estimate: 1.0h; actual effort: low-to-moderate and in line with the estimate.
+- **2026-08-26 — M2-L09 DONE:** Added configurable fabricated-experience phrase checks and source-bound numeric-token checks. Validation rejected `we tested` and an extra `300`, allowed the sourced `10` and plain kneeler keyword, and rejected invalid empty phrase configuration. Estimate: 1.5h; actual effort: low and slightly below the estimate.
+- **2026-08-26 — M2-L10 DONE:** Added spec CSV parsing, byte-level SHA-256 batch provenance, niche-alias resolution, canonical-hash deduplication, row-level rejection/PARTIAL reporting, and M1 metrics restricted by the importer to `source_type=HYPOTHESIS`. Package-level integration validation imported all 44 source rows, found 10 active gardening rows, persisted 88 hypothesis metrics, reused the same batch, rejected an extra-column row, and recorded malformed quoted CSV as FAILED. Estimate: 3.0h; actual effort: moderate and in line with the estimate.
+- **2026-08-26 — M2-L11 DONE:** Added deterministic grammar, slot/facet extraction, related candidates, persistence through `AgentRunner`, and versioned clustering. Validation analyzed all 10 gardening keywords with deterministic zero-token runs, classified lightweight tools as `BEST_ATTRIBUTE_X`, grouped both tomato-support terms, found no volume output, and proved cached reruns. Estimate: 4.0h; actual effort: moderate-to-high and in line with the estimate.
+- **2026-08-26 — M2-L12 DONE:** Added analysis-only `opportunity-v1` scoring with approved weights, provisional bands, fixed 0.40 completeness, and explicit missing commercial/SERP inputs. Validation wrote 10 `OPPORTUNITY_SCORE` rows, wrote zero `SERP_SCORE` rows, and proved that mutating every M1 hypothesis score leaves v1 unchanged. Estimate: 2.0h; actual effort: moderate and slightly above the estimate due to end-to-end independence checks.
+- **2026-08-26 — M2-L13 DONE:** Files: added `packages/pipeline/package.json`, `packages/pipeline/src/index.ts`, and the bundled CLI implementation in `apps/cli/src/index.ts`; updated root/app package metadata, lockfile, config default storage, `.env.example`, and the migration loader fallback needed by the bundled CLI. The CLI now supports `db migrate`, `db seed`, `import`, `analyze`, `score`, canonical `pipeline --file`, and `npm run pipeline -- import-and-score <csv>`. Reports write machine-readable JSON and CSV plus Markdown, include imported/rejected/duplicates/analyzed/clustered/scored/errors, label `PROVISIONAL_OPPORTUNITY_SCORE` separately from `M1_HYPOTHESIS_SCORE` with `source_type=HYPOTHESIS`, make no measured traffic/search-volume claim, and report cost/LLM calls as zero. Validation and double-check: a clean temp PGlite database outside the synced workspace ran every CLI command successfully; the ergonomic pipeline reused the 44-row import, reported 10 analyzed/clustered/scored gardening keywords, parsed/wrote all three artifacts, and returned `total_estimated_cost_usd=0`, `llm_calls=0`. Estimate: 2.5h; qualitative actual: moderate-to-high, slightly above estimate because cross-platform bundling and persistent-path validation required an additional migration-path fallback.
+- **2026-08-26 — M2-L14 DONE:** Files/tests: added `packages/pipeline/src/golden.e2e.test.ts` using the actual `docs/M1_TOP50_keyword_shortlist.csv` and an isolated in-memory PGlite database; extended the config test to prove the default database is not `data/pglite`. The golden E2E test validates the exact 44-import/10-report counts, JSON/CSV/Markdown contents, hypothesis provenance, provisional score labeling, absent fabricated numeric SEO data, zero cost, zero LLM calls, and a full second run with exactly 44 unique canonical hashes and no extra score rows. Verification and double-check: `npm test` passed 10 files/29 tests, `npm run typecheck` passed, `npm run build` passed, IDE lint diagnostics were empty, and the separate real CLI workflow exited 0. Estimate: 2.0h; qualitative actual: moderate and in line with the estimate.
