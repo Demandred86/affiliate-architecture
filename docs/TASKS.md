@@ -1,10 +1,10 @@
-# TASKS — LEAN M2 MVP
+# TASKS — LEAN M2 MVP + M2.5 FIRST ARTICLE
 
-Status: **M2-L01–L14 complete. M2-L15 closeout not started.**
-Date: 2026-08-25
+Status: **M2-L01–L14 complete. M2.5 first article MVP complete. M2-L15 closeout not started.**
+Date: 2026-08-26
 Authoritative executable list: [tasks.csv](./tasks.csv)
 Old-ticket mapping: [M2_TASK_RECLASS.csv](./M2_TASK_RECLASS.csv)
-Related: [M2_PLAN.md](./M2_PLAN.md) · [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)
+Related: [M2_PLAN.md](./M2_PLAN.md) · [M2_5_FIRST_ARTICLE.md](./M2_5_FIRST_ARTICLE.md) · [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)
 
 The previous **117.25h P0 / 143.5h** WBS is **superseded**. Do not preserve it as the implementation queue.
 
@@ -166,12 +166,12 @@ A task is `DONE` only with its CSV **validation** and **double-check** both exec
 
 ## 7. Completion records
 
-- **2026-08-26 — M2-L01 DONE:** Installed npm workspaces; verified Node `>=22`, strict ESM build/typecheck, CLI help, LF policy, ignored `node_modules`, and green root tests.
-- **2026-08-26 — M2-L02 DONE:** Verified no-env defaults for all three budget caps, `MAX_PROJECT_BUDGET_USD` in `.env.example`, no vendor keys, and `git check-ignore .env`.
-- **2026-08-26 — M2-L03 DONE:** Verified one captured pipeline log is valid JSON with `trace_id`, while a sample API key is redacted; no audit/observability additions.
-- **2026-08-26 — M2-L04 DONE:** Verified strict provenance/import/analysis/score/report contracts, `HYPOTHESIS`, canonical `M1_HYPOTHESIS_SCORE`, and rejection of `search_volume`.
-- **2026-08-26 — M2-L05 DONE:** Applied the sole PGlite migration; verified exactly 16 lean tables, no excluded tables, the gardening alias, one active niche, and four parked niches.
-- **2026-08-26 — M2-L06 DONE:** Verified typed repositories, per-test isolated PGlite databases, idempotent canonical insertion, and database-level unique-hash rejection; no agents package or agent SQL exists.
+- **2026-08-26 — M2-L01 DONE:** Installed npm workspaces; verified Node `>=22`, strict ESM build/typecheck, CLI help, LF policy, ignored `node_modules`, and green root tests. Estimate: 2.5h; qualitative agent effort: moderate and in line with the estimate.
+- **2026-08-26 — M2-L02 DONE:** Verified no-env defaults for all three budget caps, `MAX_PROJECT_BUDGET_USD` in `.env.example`, no vendor keys, and `git check-ignore .env`. Estimate: 1.5h; qualitative agent effort: low and below the estimate.
+- **2026-08-26 — M2-L03 DONE:** Verified one captured pipeline log is valid JSON with `trace_id`, while a sample API key is redacted; no audit/observability additions. Estimate: 1.0h; qualitative agent effort: low and in line with the estimate.
+- **2026-08-26 — M2-L04 DONE:** Verified strict provenance/import/analysis/score/report contracts, `HYPOTHESIS`, canonical `M1_HYPOTHESIS_SCORE`, and rejection of `search_volume`. Estimate: 2.0h; qualitative agent effort: moderate and in line with the estimate.
+- **2026-08-26 — M2-L05 DONE:** Applied the sole PGlite migration; verified exactly 16 lean tables, no excluded tables, the gardening alias, one active niche, and four parked niches. Estimate: 4.0h; qualitative agent effort: high and in line with the estimate.
+- **2026-08-26 — M2-L06 DONE:** Verified typed repositories, per-test isolated PGlite databases, idempotent canonical insertion, and database-level unique-hash rejection; no agents package or agent SQL exists. Estimate: 2.0h; qualitative agent effort: moderate and in line with the estimate.
 - **2026-08-26 — M2-L07 DONE:** Added the deterministic-only `AgentRunner`, immutable hashed prompt versions, persisted run provenance, and idempotent reuse. Validation ran the runner twice and proved one execution/row with `model=deterministic` and zero tokens. Estimate: 2.5h; actual effort: moderate and in line with the estimate.
 - **2026-08-26 — M2-L08 DONE:** Added fail-closed per-run, UTC-daily, and lifetime-project budget checks (including `MAX_PROJECT_BUDGET_USD`) plus one zero-dollar `cost_event` per deterministic execution. Validation proved all three zero-remaining refusals and a summed deterministic cost of 0. Estimate: 1.0h; actual effort: low-to-moderate and in line with the estimate.
 - **2026-08-26 — M2-L09 DONE:** Added configurable fabricated-experience phrase checks and source-bound numeric-token checks. Validation rejected `we tested` and an extra `300`, allowed the sourced `10` and plain kneeler keyword, and rejected invalid empty phrase configuration. Estimate: 1.5h; actual effort: low and slightly below the estimate.
@@ -180,3 +180,25 @@ A task is `DONE` only with its CSV **validation** and **double-check** both exec
 - **2026-08-26 — M2-L12 DONE:** Added analysis-only `opportunity-v1` scoring with approved weights, provisional bands, fixed 0.40 completeness, and explicit missing commercial/SERP inputs. Validation wrote 10 `OPPORTUNITY_SCORE` rows, wrote zero `SERP_SCORE` rows, and proved that mutating every M1 hypothesis score leaves v1 unchanged. Estimate: 2.0h; actual effort: moderate and slightly above the estimate due to end-to-end independence checks.
 - **2026-08-26 — M2-L13 DONE:** Files: added `packages/pipeline/package.json`, `packages/pipeline/src/index.ts`, and the bundled CLI implementation in `apps/cli/src/index.ts`; updated root/app package metadata, lockfile, config default storage, `.env.example`, and the migration loader fallback needed by the bundled CLI. The CLI now supports `db migrate`, `db seed`, `import`, `analyze`, `score`, canonical `pipeline --file`, and `npm run pipeline -- import-and-score <csv>`. Reports write machine-readable JSON and CSV plus Markdown, include imported/rejected/duplicates/analyzed/clustered/scored/errors, label `PROVISIONAL_OPPORTUNITY_SCORE` separately from `M1_HYPOTHESIS_SCORE` with `source_type=HYPOTHESIS`, make no measured traffic/search-volume claim, and report cost/LLM calls as zero. Validation and double-check: a clean temp PGlite database outside the synced workspace ran every CLI command successfully; the ergonomic pipeline reused the 44-row import, reported 10 analyzed/clustered/scored gardening keywords, parsed/wrote all three artifacts, and returned `total_estimated_cost_usd=0`, `llm_calls=0`. Estimate: 2.5h; qualitative actual: moderate-to-high, slightly above estimate because cross-platform bundling and persistent-path validation required an additional migration-path fallback.
 - **2026-08-26 — M2-L14 DONE:** Files/tests: added `packages/pipeline/src/golden.e2e.test.ts` using the actual `docs/M1_TOP50_keyword_shortlist.csv` and an isolated in-memory PGlite database; extended the config test to prove the default database is not `data/pglite`. The golden E2E test validates the exact 44-import/10-report counts, JSON/CSV/Markdown contents, hypothesis provenance, provisional score labeling, absent fabricated numeric SEO data, zero cost, zero LLM calls, and a full second run with exactly 44 unique canonical hashes and no extra score rows. Verification and double-check: `npm test` passed 10 files/29 tests, `npm run typecheck` passed, `npm run build` passed, IDE lint diagnostics were empty, and the separate real CLI workflow exited 0. Estimate: 2.0h; qualitative actual: moderate and in line with the estimate.
+
+## 8. M2.5 — First article MVP (12.5h CURSOR + 5h HUMAN remaining)
+
+| ID | h | Owner | Status | Title |
+|----|--:|-------|--------|-------|
+| M2.5-01 | 1.0 | CURSOR | DONE | Scaffold apps/site workspace |
+| M2.5-02 | 2.5 | CURSOR | DONE | Evidence-first product/source JSON |
+| M2.5-03 | 1.5 | CURSOR | DONE | Hand-size decision engine + tests |
+| M2.5-04 | 3.0 | CURSOR | DONE | Static article page build |
+| M2.5-05 | 0.5 | CURSOR | DONE | Affiliate placeholder architecture |
+| M2.5-06 | 1.0 | SHARED | DONE | SEO + structured data (HUMAN validates after deploy) |
+| M2.5-07 | 1.5 | SHARED | DONE | Mobile-first CSS (HUMAN visual QA) |
+| M2.5-08 | 1.0 | CURSOR | DONE | M2.5 docs + task updates |
+| M2.5-09 | 0.5 | CURSOR | DONE | npm test/typecheck/build pass |
+| M2.5-10 | 2.0 | HUMAN | PLANNED | Affiliate account + real links |
+| M2.5-11 | 2.0 | HUMAN | PLANNED | Deploy + Search Console |
+| M2.5-12 | 1.0 | HUMAN | PLANNED | Verify prices + evidence conflicts |
+
+**Output:** `apps/site/dist/best-pruning-shears-for-small-hands/index.html`  
+**Manual checklist:** [M2_5_MANUAL_CHECKLIST.md](./M2_5_MANUAL_CHECKLIST.md)
+
+**2026-08-26 — M2.5 CURSOR tasks DONE:** Built static first-article MVP for “best pruning shears for small hands” with five evidence-backed products, hand-size tool, affiliate placeholders, SEO/FAQ/schema, 13 new tests (42 total). `npm test`, `npm run typecheck`, `npm run build` green. No LLM/API calls. No M3 code.

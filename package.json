@@ -14,7 +14,8 @@
     "ase": "./apps/cli/dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && esbuild apps/cli/src/index.ts --bundle --platform=node --format=esm --outfile=apps/cli/dist/index.js --external:@electric-sql/pglite --external:drizzle-orm --external:drizzle-orm/* --external:uuid --external:zod --external:csv-parse/* --external:csv-stringify/*",
+    "build": "tsc -p tsconfig.json && esbuild apps/cli/src/index.ts --bundle --platform=node --format=esm --outfile=apps/cli/dist/index.js --external:@electric-sql/pglite --external:drizzle-orm --external:drizzle-orm/* --external:uuid --external:zod --external:csv-parse/* --external:csv-stringify/* && npm run build --workspace=@ase/site",
+    "build:site": "npm run build --workspace=@ase/site",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "ase": "node apps/cli/dist/index.js",

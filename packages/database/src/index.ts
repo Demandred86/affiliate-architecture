@@ -8,11 +8,11 @@ export * from "./repositories.js";
 export * from "./schema.js";
 export * from "./seed.js";
 
-export type Database = ReturnType<typeof drizzle<typeof schema>>;
-
-export function createDatabase(client: PGlite): Database {
+export function createDatabase(client: PGlite) {
   return drizzle(client, { schema });
 }
+
+export type Database = ReturnType<typeof createDatabase>;
 
 export async function migrate(client: PGlite): Promise<void> {
   const migrationUrl = new URL("../drizzle/0000_lean_m2.sql", import.meta.url);
