@@ -1,227 +1,165 @@
-# TASKS — M2 DATABASE AND CORE INFRASTRUCTURE
+# TASKS — LEAN M2 MVP
 
-Status: **M2 planning — awaiting approval**
+Status: **Architecture approved. Implementation not started.**
 Date: 2026-08-25
-Source of truth for import: [tasks.csv](./tasks.csv)
-Related: [M2_PLAN.md](./M2_PLAN.md) · [RUNBOOK.md](./RUNBOOK.md) · [ARCHITECTURE.md](./ARCHITECTURE.md)
+Authoritative executable list: [tasks.csv](./tasks.csv)
+Old-ticket mapping: [M2_TASK_RECLASS.csv](./M2_TASK_RECLASS.csv)
+Related: [M2_PLAN.md](./M2_PLAN.md) · [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)
 
-Covers: task breakdown (8), estimated effort (10), acceptance criteria (11), automation vs human (13).
+The previous **117.25h P0 / 143.5h** WBS is **superseded**. Do not preserve it as the implementation queue.
 
 ---
 
-## 1. Effort summary
+## 1. Totals
 
-Estimates are **engineering hours** for one person who already read this planning set. They include tests for that task.
+| Class | Meaning | Hours |
+|-------|---------|------:|
+| **A — REQUIRED FOR M2 MVP** | [tasks.csv](./tasks.csv) M2-L01–L15 | **32.5** |
+| **B — USEFUL BUT DEFERRED** | After M2, before/during later milestones | 0 in this sprint |
+| **C — M3+** | Needs later milestone | 0 in this sprint |
+| **D — REMOVE** | Do not implement | 0 |
 
-**[tasks.csv](./tasks.csv) is authoritative.** Generated totals:
+Calendar: **about 4–6 working days** for one experienced TypeScript developer.
 
-| Slice | Hours | Rows |
-|-------|------:|------|
-| **P0 — required for acceptance** | **117.25** | Core path including granular DB/agent tickets |
-| **P1 — hardening** | **24.75** | CI, vendor LLM adapters, LLM fallback, PG parity, extra fixtures |
-| **P2 — polish** | **1.5** | Husky, coverage ratchet |
-| **All CSV rows** | **143.5** | 96 tasks including H-001–H-004 |
+## 2. Milestone acceptance
 
-Calendar (one engineer): treat **117h P0** as about **3 full-time weeks**. Combining Wave 3 tables into one migration PR can shrink *elapsed* time without deleting tickets. If DN-04 stays mock-only, defer ~7.5h (M2-062/063/064/106).
+[M2_PLAN.md](./M2_PLAN.md) §4. Short form: offline `pipeline` on the M1 CSV, 44 imported / 10 reported, `OPPORTUNITY_SCORE` vs `M1_HYPOTHESIS_SCORE`, no `SERP_SCORE`, **$0**, idempotent, guardrails, `npm test`.
 
-Critical path: [ARCHITECTURE.md](./ARCHITECTURE.md) §8.2.
+## 3. A — Required M2 MVP (32.5h)
 
-## 2. Epics
+| ID | h | Deps | Auto | Human |
+|----|--:|------|------|-------|
+| M2-L01 | 2.5 | — | Yes | No |
+| M2-L02 | 1.5 | L01 | Yes | No |
+| M2-L03 | 1.0 | L01 | Yes | No |
+| M2-L04 | 2.0 | L01 | Yes | No |
+| M2-L05 | 4.0 | L02, L04 | Yes | No |
+| M2-L06 | 2.0 | L05 | Yes | No |
+| M2-L07 | 2.5 | L06 | Yes | No |
+| M2-L08 | 1.0 | L02, L05 | Yes | No |
+| M2-L09 | 1.5 | L04 | Yes | No |
+| M2-L10 | 3.0 | L06 | Yes | No |
+| M2-L11 | 4.0 | L07, L09, L10 | Yes | No |
+| M2-L12 | 2.0 | L10, L11 | Yes | No |
+| M2-L13 | 2.5 | L10–L12 | Yes | No |
+| M2-L14 | 2.0 | L13 | Yes | No |
+| M2-L15 | 1.0 | L14 | Partial | Yes (confirm stop) |
 
-| Epic | IDs |
-|------|-----|
-| Human decisions | H-001–H-004 |
-| Foundation | M2-001–M2-008 |
-| Config | M2-010–M2-012 |
-| Logging | M2-020–M2-022 |
-| Database | M2-030–M2-042 |
-| Schemas | M2-050–M2-054 |
-| AI provider | M2-060–M2-066 |
-| Agent core | M2-070–M2-076 |
-| Guardrails | M2-080–M2-083 |
-| Keyword import | M2-090–M2-096 |
-| Keyword agent | M2-100–M2-108 |
-| Scoring | M2-110–M2-115 |
-| CLI and report | M2-120–M2-124 |
-| Test program | M2-130–M2-137 |
-| Task sync / docs | M2-140–M2-142 |
-| Closeout | M2-150–M2-153 |
+Details, AC, validation, and double-check: **[tasks.csv](./tasks.csv)** (one row per ID).
 
-## 3. Milestone-level acceptance (M2 done)
+**Critical path hours:** L01+L02+L04+L05+L06+L07+L10+L11+L12+L13+L14+L15 = **27.5h**.
 
-The milestone is done only if **all** of the following hold (detail in [RUNBOOK.md](./RUNBOOK.md)):
+## 4. Reclassification of the previous M2 tickets
 
-1. `ase pipeline --file docs/M1_TOP50_keyword_shortlist.csv --niche problem-solving-gardening --out reports/m2-acceptance` exits 0 with **no API keys**.
-2. DB contains **44** imported keywords; default report lists **exactly 10** gardening keywords matching M1 first batch order **or** a documented v1 sort with the same 10 set.
-3. Every gardening keyword has `keyword_analysis` with pattern `BEST_X_FOR_Y` or `BEST_ATTRIBUTE_X` (the lightweight row).
-4. Every score has `missing_inputs` including `search_volume` and `source` of M1 scores is `HYPOTHESIS` in JSON.
-5. Re-run without `--force` is a cache/idempotent no-op: same keyword ids, `agent_run` status `CACHED` or zero new cost, report bytes equal after stripping `generatedAt`/`runId` **or** those fields are frozen via `Clock`.
-6. Guardrail unit tests reject fabricated “we tested” and invented numbers.
-7. `total_estimated_cost_usd === 0` on the acceptance run.
-8. No production code for M3+ agents beyond README/contract stubs.
-9. Planning docs still match implementation (ADR list, table list).
+A = still required, **folded into M2-L*** (do not execute the old ticket as a separate 1–3h job).
 
-## 4. Task catalogue
+| Old ID | Class | Notes |
+|--------|-------|-------|
+| H-001 | B | Relocate off OneDrive; not required for pipeline |
+| H-002 | A | Decided (PGlite); no remaining hours |
+| H-003 | B | Git remote / backup |
+| H-004 | C | Vendor LLM keys |
+| M2-001 | B | Relocate workspace |
+| M2-002 | A | → L01 |
+| M2-003 | A | → L01 |
+| M2-004 | B | Full ESLint/Prettier suite; L01 only `.gitattributes` LF |
+| M2-005 | A | → L01 vitest; no coverage ratchet |
+| M2-006 | D | Husky |
+| M2-007 | B | CI beyond `npm test` |
+| M2-008 | B | Push to remote |
+| M2-010 | A | → L02 |
+| M2-011 | A | → L02 (no vendor fail-closed; no adapters) |
+| M2-012 | A | → L02 + project budget |
+| M2-020 | A | → L03 |
+| M2-021 | B | `audit_event` table |
+| M2-022 | B | Dedicated redaction suite |
+| M2-030 | A | → L05 |
+| M2-031 | A | → L05 |
+| M2-032 | A | → L05 |
+| M2-033 | A | → L05 |
+| M2-034 | A | → L05 |
+| M2-035 | A | → L05 |
+| M2-036 | A | → L05 (`agent_prompt`/`agent_run`/`cost_event` only) |
+| M2-037 | C | `task`/`audit`/`human_review`/`change_proposal` |
+| M2-038 | A | Minimal uniques inside L05 |
+| M2-039 | A | → L05 |
+| M2-040 | A | → L06 |
+| M2-041 | A | → L06 |
+| M2-042 | B | Real Postgres parity |
+| M2-050 | A | → L04 |
+| M2-051 | A | → L04 |
+| M2-052 | A | → L04 |
+| M2-053 | A | → L04 |
+| M2-054 | A | → L04 |
+| M2-060 | B | Full AIProvider package |
+| M2-061 | B | MockProvider |
+| M2-062 | C | OpenAI |
+| M2-063 | C | Anthropic |
+| M2-064 | C | Price table |
+| M2-065 | A | → L08 |
+| M2-066 | A | → L08 |
+| M2-070 | A | → L07 |
+| M2-071 | B | Retry/repair loops |
+| M2-072 | A | → L07 |
+| M2-073 | A | → L07 hash/version prompts |
+| M2-074 | B | JobQueue |
+| M2-075 | A | → L07 |
+| M2-076 | A | → L07 |
+| M2-080 | A | → L09 |
+| M2-081 | A | → L09 |
+| M2-082 | B | Untrusted wrapping for LLM |
+| M2-083 | A | → L09 fixtures |
+| M2-090 | A | → L10 |
+| M2-091 | A | → L10 |
+| M2-092 | A | → L10 |
+| M2-093 | A | → L10 |
+| M2-094 | A | → L10 `M1_HYPOTHESIS_SCORE` |
+| M2-095 | A | → L10 |
+| M2-096 | A | → L10 reject bad rows |
+| M2-100 | A | → L11 |
+| M2-101 | A | → L11 |
+| M2-102 | A | → L11 |
+| M2-103 | A | → L11 |
+| M2-104 | A | → L11 |
+| M2-105 | A | → L11 small related-candidate list |
+| M2-106 | C | LLM fallback |
+| M2-107 | A | → L11 |
+| M2-108 | A | → L11/L14 |
+| M2-110 | A | → L12 |
+| M2-111 | A | → L12 |
+| M2-112 | A | → L12 side-by-side hypothesis |
+| M2-113 | A | → L12 |
+| M2-114 | A | → L14 |
+| M2-115 | A | → L12 |
+| M2-120 | A | → L13 |
+| M2-121 | A | → L13 |
+| M2-122 | A | → L13 JSON+MD (CSV report B) |
+| M2-123 | B | Frozen golden bytes |
+| M2-124 | A | Minimal README in L01/L13 |
+| M2-130 | B | Extra unit sweep |
+| M2-131 | A | → L14 |
+| M2-132 | A | → L14 |
+| M2-133 | B | Large fixture pack |
+| M2-134 | A | → L14 |
+| M2-135 | A | → L14 |
+| M2-136 | D | Coverage gate |
+| M2-137 | B | Paid-API failure tests |
+| M2-140 | D | `ase tasks sync` |
+| M2-141 | D | CSV/DB checksum |
+| M2-142 | B | CONTRIBUTING (`.env.example` in L02) |
+| M2-150 | A | → L15 |
+| M2-151 | A | → L15 |
+| M2-152 | A | → L15 |
+| M2-153 | A | → L15 |
 
-Columns match `tasks.csv`. **Validation** = automated or operator steps to mark done. **Double-check** = independent second pass.
+## 5. B / C / D themes (do not implement in M2)
 
-### 4.1 Human decisions
+**B:** OneDrive move, git remote, ESLint suite, GitHub Actions, Postgres parity, Mock/AIProvider package, JobQueue, audit table, CSV report + golden files, extra fixtures, CONTRIBUTING, LLM wrapping.
 
-| ID | Title | h | Pri | Auto | Human | Deps |
-|----|-------|--:|-----|------|-------|------|
-| H-001 | Decide repo location (DN-01) | 1 | P0 | No | Yes | — |
-| H-002 | Confirm PGlite (DN-02) | 0.25 | P0 | No | Yes | — |
-| H-003 | Create git remote (DN-03) | 0.5 | P0 | Partial | Yes | H-001 |
-| H-004 | Optional LLM keys (DN-04) | 0.25 | P1 | No | Yes | — |
+**C:** OpenAI/Anthropic, SERP, products, writer, WordPress, Next.js, Redis, HTTP API, Docker-required flow, `human_review`/`change_proposal` tables, LLM fallback.
 
-**H-001 AC:** Path chosen; if stay on OneDrive, documented exception + `node_modules`/`data` excluded from sync.  
-**H-003 AC:** `git remote -v` shows a private remote; first push after M2-008.
+**D:** Husky, coverage ratchet, task-tracker DB sync.
 
-### 4.2 Foundation
+## 6. Verification template
 
-| ID | Title | h | Pri | Deps | Auto |
-|----|-------|--:|-----|------|------|
-| M2-001 | Relocate/clone workspace if approved | 2 | P0 | H-001 | Partial |
-| M2-002 | npm workspaces scaffold | 2 | P0 | M2-001 | Yes |
-| M2-003 | TS strict ESM + references | 2 | P0 | M2-002 | Yes |
-| M2-004 | ESLint, Prettier, `.gitattributes` LF | 1 | P0 | M2-003 | Yes |
-| M2-005 | Vitest + coverage config | 1.5 | P0 | M2-003 | Yes |
-| M2-006 | Git hooks / lint-staged | 1 | P2 | M2-004 | Yes |
-| M2-007 | CI (install, test, secret scan) | 2 | P1 | M2-005, M2-008 | Yes |
-| M2-008 | Initial commit + push | 0.5 | P0 | M2-002, H-003 | Partial |
-
-**M2-002 AC:** `npm ls -w` shows `apps/cli` and listed packages (even if empty).  
-**M2-005 AC:** `npm test` runs and passes a placeholder.
-
-### 4.3 Config and logging
-
-| ID | Title | h | Pri | Deps |
-|----|-------|--:|-----|------|
-| M2-010 | `packages/config` loader | 2 | P0 | M2-003 |
-| M2-011 | Zod env; mock default; fail closed per provider | 1.5 | P0 | M2-010 |
-| M2-012 | Budgets and feature flags | 1 | P0 | M2-011 |
-| M2-020 | pino JSON logger | 2 | P0 | M2-003 |
-| M2-021 | `audit_event` writer (after DB) | 1 | P0 | M2-036, M2-020 |
-| M2-022 | Redaction tests | 1 | P0 | M2-020 |
-
-**M2-011 AC:** Boot with empty env uses mock; `AI_PROVIDER=openai` without key throws before any call.
-
-### 4.4 Database
-
-| ID | Title | h | Pri | Deps |
-|----|-------|--:|-----|------|
-| M2-030 | PGlite + Drizzle project | 3 | P0 | M2-010, H-002 |
-| M2-031 | `ase db migrate` | 1.5 | P0 | M2-030 |
-| M2-032 | niche, alias, keyword, keyword_alias | 2 | P0 | M2-031, M2-050 |
-| M2-033 | import_batch, import_row | 1.5 | P0 | M2-032 |
-| M2-034 | facet, joins, cluster, analysis | 2 | P0 | M2-032 |
-| M2-035 | keyword_metric, keyword_score | 1.5 | P0 | M2-032 |
-| M2-036 | agent_prompt, agent_run, cost_event, job | 2 | P0 | M2-032 |
-| M2-037 | task, audit_event, human_review, change_proposal | 1.5 | P0 | M2-032 |
-| M2-038 | Indexes + check constraints | 1.5 | P0 | M2-037 |
-| M2-039 | Seeds (niches, facets, scoring model) | 1.5 | P0 | M2-038 |
-| M2-040 | Repositories | 3 | P0 | M2-038, M2-020 |
-| M2-041 | `createTestDb()` | 2 | P0 | M2-040 |
-| M2-042 | Optional real Postgres parity | 2 | P1 | M2-031 |
-
-**M2-038 AC:** Cannot insert `keyword_score.score` non-null with band `INSUFFICIENT_DATA`.  
-**M2-039 AC:** Gardening niche active; `Lawn & Garden` alias resolves.
-
-### 4.5 Schemas, AI, runtime, guardrails
-
-| ID | Title | h | Pri | Deps |
-|----|-------|--:|-----|------|
-| M2-050 | Provenance Zod | 1.5 | P0 | M2-003 |
-| M2-051 | Import/keyword Zod | 1.5 | P0 | M2-050 |
-| M2-052 | KeywordAnalysis Zod | 1.5 | P0 | M2-050 |
-| M2-053 | Report Zod | 1 | P0 | M2-052 |
-| M2-054 | Error codes | 0.5 | P0 | M2-050 |
-| M2-060 | AIProvider interface | 1.5 | P0 | M2-011, M2-050 |
-| M2-061 | MockProvider | 2 | P0 | M2-060 |
-| M2-062 | OpenAI adapter | 2 | P1 | M2-060 |
-| M2-063 | Anthropic adapter | 2 | P1 | M2-060 |
-| M2-064 | Price table | 1 | P1 | M2-060 |
-| M2-065 | Budget guard | 1.5 | P0 | M2-012, M2-060 |
-| M2-066 | cost_event write | 1 | P0 | M2-036, M2-065 |
-| M2-070 | AgentRunner | 3 | P0 | M2-040, M2-060, M2-020 |
-| M2-071 | Retry/repair | 1.5 | P1 | M2-070 |
-| M2-072 | Idempotency | 1.5 | P0 | M2-070 |
-| M2-073 | Prompt registry | 1.5 | P1 | M2-036, M2-070 |
-| M2-074 | JobQueue in-process | 2 | P0 | M2-036 |
-| M2-075 | Persist runs | 1.5 | P0 | M2-070, M2-036 |
-| M2-076 | Failure mapping | 0.5 | P0 | M2-070 |
-| M2-080 | Banned phrases | 1 | P0 | M2-050 |
-| M2-081 | Numeric fabrication | 1.5 | P0 | M2-050 |
-| M2-082 | Untrusted wrapping | 1 | P1 | M2-080 |
-| M2-083 | Experience fixtures | 1 | P0 | M2-080 |
-
-### 4.6 Import, keyword agent, scoring
-
-| ID | Title | h | Pri | Deps |
-|----|-------|--:|-----|------|
-| M2-090 | Spec CSV parser | 2 | P0 | M2-051 |
-| M2-091 | Import command | 2.5 | P0 | M2-090, M2-040 |
-| M2-092 | Normalise/dedupe | 1.5 | P0 | M2-091 |
-| M2-093 | Niche aliases | 1 | P0 | M2-039, M2-091 |
-| M2-094 | Hypothesis metrics | 1.5 | P0 | M2-091, M2-035 |
-| M2-095 | File SHA-256 batch | 0.5 | P0 | M2-091 |
-| M2-096 | Reject bad rows | 1.5 | P0 | M2-091 |
-| M2-100 | Agent contract wiring | 1 | P0 | M2-052, M2-070 |
-| M2-101 | Pattern grammar | 2.5 | P0 | M2-100 |
-| M2-102 | Facet lexicon | 2 | P0 | M2-039, M2-100 |
-| M2-103 | Intent/slots | 2 | P0 | M2-102 |
-| M2-104 | Clusters | 2 | P0 | M2-103 |
-| M2-105 | Related candidates | 1.5 | P0 | M2-104 |
-| M2-106 | LLM fallback | 2.5 | P1 | M2-061, M2-101 |
-| M2-107 | Persist analysis | 1.5 | P0 | M2-034, M2-100 |
-| M2-108 | Agent tests (incl. 3 no-`for`) | 2.5 | P0 | M2-101 |
-| M2-110 | Formula v1 | 2 | P0 | M2-107 |
-| M2-111 | missing_inputs | 1 | P0 | M2-110 |
-| M2-112 | M1 side-by-side | 0.5 | P0 | M2-094, M2-110 |
-| M2-113 | Persist scores | 1 | P0 | M2-035, M2-110 |
-| M2-114 | Scoring tests | 1.5 | P0 | M2-110 |
-| M2-115 | Version stamp | 0.5 | P0 | M2-113 |
-
-**M2-096 AC:** Quoted comma fixture; extra column ⇒ row REJECTED, batch PARTIAL.  
-**M2-108 AC:** All 10 gardening keywords analysed without LLM.  
-**M2-114 AC:** Changing M1 metric does not change v1_score.
-
-### 4.7 CLI, tests, docs, closeout
-
-| ID | Title | h | Pri | Deps |
-|----|-------|--:|-----|------|
-| M2-120 | Commands import/analyze/score | 2 | P0 | M2-091, M2-107, M2-113 |
-| M2-121 | `pipeline` | 1.5 | P0 | M2-120, M2-074 |
-| M2-122 | JSON/MD/CSV report | 2.5 | P0 | M2-053, M2-121 |
-| M2-123 | Golden fixture | 1.5 | P0 | M2-122 |
-| M2-124 | README usage | 1 | P1 | M2-121 |
-| M2-130 | Unit sweep leftover | 1 | P1 | M2-108 |
-| M2-131 | Schema tests | 1.5 | P0 | M2-052 |
-| M2-132 | Hallucination tests | 1.5 | P0 | M2-081, M2-083 |
-| M2-133 | Fixture pack | 2 | P1 | M2-096 |
-| M2-134 | Integration pipeline | 2.5 | P0 | M2-121, M2-041 |
-| M2-135 | Idempotency test | 1 | P0 | M2-134 |
-| M2-136 | Coverage gate | 0.5 | P2 | M2-005 |
-| M2-137 | Budget/API failure tests | 1.5 | P1 | M2-065 |
-| M2-140 | `ase tasks sync` | 1.5 | P1 | M2-037 |
-| M2-141 | CSV/MD/DB checksum | 1 | P1 | M2-140 |
-| M2-142 | CONTRIBUTING + env example | 1 | P1 | M2-011 |
-| M2-150 | Execute RUNBOOK verification | 2 | P0 | M2-134, M2-007 optional |
-| M2-151 | Double-check RUNBOOK §5 | 1.5 | P0 | M2-150 |
-| M2-152 | Milestone report (spec §34) | 1 | P0 | M2-151 |
-| M2-153 | Stop — wait for approval (M3) | 0.5 | P0 | M2-152 |
-
-## 5. Per-task verification template
-
-Every P0 task uses:
-
-- **WHAT / WHY / HOW** — in the CSV description and this file.
-- **EXPECTED RESULT** — acceptance criteria cell.
-- **HOW TO VERIFY** — validation cell (must be executable).
-- **HOW TO DOUBLE-CHECK** — independent of the first command (read code, second query, or mutated fixture).
-
-A task is not `DONE` if only the happy path was run.
-
-## 6. Hours roll-up
-
-Sum `Estimated hours` in [tasks.csv](./tasks.csv) (currently **143.5** total; **117.25** P0). Group by Epic and Priority in the tracker of your choice. If DN-04 stays mock-only, skip or defer M2-062, M2-063, M2-064, M2-106 (~7.5h).
+A task is `DONE` only with its CSV **validation** and **double-check** both executed.

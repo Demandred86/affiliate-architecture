@@ -1,6 +1,6 @@
 # ASSUMPTIONS, GAPS AND INPUT-DATA AUDIT
 
-Status: **M2 planning — awaiting approval**
+Status: **Architecture approved. M2 implementation = lean MVP ([ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)). Waiting to start code.**
 Date: 2026-08-25
 Owner: lead architect
 Related: [MASTER_SPEC.md](./MASTER_SPEC.md), [M1_VALIDATION.md](./M1_VALIDATION.md), [M2_PLAN.md](./M2_PLAN.md)
@@ -72,7 +72,7 @@ Findings and their design consequences:
 | KD-09 | FACT | Qualifiers recur **across** niches: `small hands` (2 keywords, gardening + tools), `beginners` (9 keywords, 5 niches), `small kitchen` (4), `SUV` (4). | Strongly validates a normalised, niche-independent `facet` vocabulary with a many-to-many `keyword_facet` join, rather than per-keyword free-text attributes. |
 | KD-10 | FACT | The `reason` column contains **semicolons but no commas**, so naive comma splitting happens to work on this file. | Do not rely on it. Use a spec-compliant CSV parser and add a quoted-comma fixture, or the next input file will silently corrupt. |
 | KD-11 | FACT | The CSV contains **no search volume, no keyword difficulty, no CPC, and no click data**. | Per `MASTER_SPEC.md` §1.1 and §10, these must be modelled as *absent*, never imputed. Consequently the M2 opportunity score is structurally **provisional** — see [SCORING.md](./SCORING.md). |
-| KD-12 | ASSUMPTION | `opportunity_score` and `serp_opportunity` are **human/LLM research hypotheses** from M1, not measurements. | Mandated by `MASTER_SPEC.md` §3. They are imported as `keyword_metric` rows with `source_type = HYPOTHESIS`, are excluded from the authoritative score, and are reported side-by-side for comparison only. |
+| KD-12 | ASSUMPTION | CSV `opportunity_score` / `serp_opportunity` are **hypotheses**. | Stored as `M1_HYPOTHESIS_SCORE` and `M1_HYPOTHESIS_SERP_LABEL` with `source_type = HYPOTHESIS`. Excluded from `OPPORTUNITY_SCORE`. Not `SERP_SCORE`. See [SCORING.md](./SCORING.md). |
 
 ## 4. Business and product assumptions
 
@@ -91,7 +91,8 @@ Findings and their design consequences:
 |----|------|-----------|
 | TA-01 | ASSUMPTION | M2 has a **single operator** (the repository owner) running a local CLI. No multi-user authentication, no RBAC, and no public network surface is built in M2. The design keeps an `actor` column everywhere so audit trails survive the later introduction of real users. |
 | TA-02 | ASSUMPTION | Deployment target is undecided. M2 therefore avoids any provider-specific primitive (no serverless-only APIs, no vendor-locked queue). Postgres-compatible storage + a Node process is the only infrastructure contract. |
-| TA-03 | ASSUMPTION | An LLM API key may not be available on day one. M2 must therefore complete its full acceptance run with a deterministic `MockProvider` and **$0.00 spend**. LLM usage is an enhancement path, not a dependency. |
+| TA-03 | ASSUMPTION | M2 acceptance uses **deterministic analysis only** and **$0.00** `cost_event` spend. No vendor LLM adapter in M2 ([ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)). |
+| TA-08 | ASSUMPTION | M2 engineering envelope is **20–35 hours** (planned **32.5h**). The 117.25h P0 WBS is **superseded**, not preserved. |
 | TA-04 | ASSUMPTION | Data volumes in M2 are tiny (tens of keywords). No sharding, partitioning, read replicas, caching tier or search index is justified. Every index added must be justified by an actual query. |
 | TA-05 | ASSUMPTION | "Basic opportunity scoring" (`MASTER_SPEC.md` §31.10) means a **deterministic, versioned, auditable formula** — not a trained model. No ML training is in M2 scope. |
 | TA-06 | ASSUMPTION | Timestamps are stored as `timestamptz` in UTC; all display formatting happens at the edge. |
@@ -102,33 +103,31 @@ Findings and their design consequences:
 | ID | Spec ref | Ambiguity | Chosen interpretation |
 |----|----------|-----------|----------------------|
 | SI-01 | §31 | The M2 list includes "repository, database, schemas… agent framework" but not a web UI, while §7 recommends Next.js. | No web application in M2. `apps/web` is deferred to M6 when the human-review queue first needs a UI. See [ADR-0006](./ADR/ADR-0006-defer-web-app.md). |
-| SI-02 | §7 vs §31 | §7 recommends Redis + BullMQ, but M2's deliverable is a batch pipeline. | No Redis in M2. A `JobQueue` interface with an in-process sequential runner is built now; BullMQ becomes an adapter in M3/M4. See [ADR-0005](./ADR/ADR-0005-defer-redis-bullmq.md). |
-| SI-03 | §8 | 23 entities are listed as the minimum database design. | All 23 are **designed** in [DATABASE.md](./DATABASE.md). Only the subset needed by M2 is **migrated**, because migrating unused tables freezes guesses before the requirements are known. See [ADR-0013](./ADR/ADR-0013-forward-only-migrations.md). |
+| SI-02 | §7 vs §31 | Redis + BullMQ vs batch CLI. | **No Redis and no JobQueue in M2** ([ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)). Sequential CLI. BullMQ is M3+. |
+| SI-03 | §8 | 23 entities minimum design. | Full ERD remains documentation. M2 migrates only the lean set in ADR-0015. |
 | SI-04 | §8 | "Prisma or Drizzle". | Drizzle. Prisma's `migrate dev` requires a live shadow database, which is impossible without Docker/Postgres on this machine. See [ADR-0003](./ADR/ADR-0003-drizzle-over-prisma.md). |
-| SI-05 | §9 / §23 | Agents must have prompts and cost tracking, but §23 forbids calling a model where a deterministic function suffices. | The keyword agent is **deterministic-first**: a grammar/lexicon extractor runs first, and an LLM is invoked only for low-confidence residue. Every run records which path was taken. See [ADR-0007](./ADR/ADR-0007-deterministic-first-agents.md). |
-| SI-06 | §25 | Tasks must live in `docs/TASKS.md` **and** `docs/tasks.csv`. | The CSV is the machine-readable source of truth; `TASKS.md` is generated/reviewed prose; a `task` table mirrors the CSV so agents can read status. A checksum guard prevents the three drifting apart. |
-| SI-07 | §31 | "At the end of M2 I must be able to run IMPORT → … → REPORT and receive a structured report." | Interpreted as a single command (`pipeline`) that is idempotent, offline-capable, byte-reproducible against a golden fixture, and emits JSON + Markdown + CSV. This is the primary M2 acceptance test. |
-| SI-08 | §29 | M2 is "Database + core infrastructure", yet §31 also requires the keyword analysis agent. | §31 governs. The keyword agent and scoring are in M2; SERP work is not (that is M3). |
+| SI-05 | §9 / §23 | Prompts vs deterministic. | M2: **deterministic path only**. LLM fallback is deferred. `agent_prompt` still records version/hash. |
+| SI-06 | §25 | TASKS.md + tasks.csv + DB. | **M2: markdown + CSV only.** No `task` table. |
+| SI-07 | §31 | IMPORT → REPORT. | Single `pipeline` command, idempotent, **offline**, JSON + Markdown report (CSV report deferred). Primary acceptance test in [M2_PLAN.md](./M2_PLAN.md). |
+| SI-08 | §29 | M2 vs keyword agent. | Keyword analysis + scoring are in M2; SERP is M3. |
 
 ## 7. Explicitly out of scope for M2
 
-To prevent scope creep, the following are named as **not** M2, each with its milestone:
+M3+: SERP, products, evidence, writer, QA, WordPress, analytics, learning, Next.js, Redis, HTTP API, Docker-required workflow, vendor LLM adapters, Postgres parity job, `task`/`job`/`audit_event` tables.
 
-SERP retrieval and domain classification (M3) · product discovery and Amazon integration (M4) · evidence collection (M4) · content briefs and writing (M5) · fact-checking, SEO QA, affiliate compliance (M6) · WordPress publishing (M7) · Search Console / Bing / Associates analytics (M8) · experiments and learning loop (M9) · autonomous orchestration (M10) · web UI (M6) · multi-user auth (post-M7) · multi-market/multi-language data (post-M10).
-
-Guardrail packages (banned-phrase and numeric-fabrication detectors) **are** built in M2 even though their first consumer is M5/M6, because they are cheap now, they encode the project's core safety rule, and retrofitting them later would mean re-validating already-generated content.
+M2 **does** include banned-phrase + numeric-fabrication guardrails (cheap, core safety).
 
 ## 8. Open decisions requiring human input
 
-These block or materially change implementation and are the subject of the approval gate.
+Architecture review **resolved:** DN-02 (PGlite), DN-04 (no paid LLM in M2), DN-05 (lean 20–35h).
 
-| ID | Decision | Options | Recommendation | Blocks |
-|----|----------|---------|----------------|--------|
-| DN-01 | Repository location | (a) move to a non-synced path such as `C:\dev\affiliate-seo-engine`; (b) stay in OneDrive and exclude `node_modules`; (c) stay as-is | **(a)**. OneDrive actively syncing tens of thousands of `node_modules` files and a live database file risks lock contention, corrupted installs and sync storms. Git plus a remote is the correct backup mechanism, not OneDrive. | M2-001, everything after |
-| DN-02 | Local database runtime | (a) PGlite embedded Postgres (zero install); (b) install Docker Desktop; (c) hosted Neon/Supabase free tier | **(a) for dev/test now, plus (c) later for staging**. Keeps M2 runnable offline today at $0 with no admin rights, while remaining true to the Postgres dialect. Option (b) additionally requires WSL2 and admin rights. | M2-030 |
-| DN-03 | Git remote / backup | (a) GitHub private repo; (b) Cursor-hosted repo; (c) local only | **(a) or (b)** — any remote. Currently a single disk failure loses the project. Also required for CI. | M2-007, M2-008 |
-| DN-04 | LLM provider for the keyword agent's fallback path | (a) mock only for M2; (b) OpenAI; (c) Anthropic; (d) both | **(a) for the acceptance run, (b) or (c) wired but optional.** Expected M2 spend is $0–2 either way. | M2-062, M2-063 |
-| DN-05 | Effort envelope | (a) full plan ≈ full hardening; (b) P0-only core path | Decide after reviewing [TASKS.md](./TASKS.md) totals. | sequencing |
+| ID | Status | Notes |
+|----|--------|-------|
+| DN-01 | **Open, not blocking M2 code** | Prefer move off OneDrive. If staying: gitignore `node_modules` and `data/`. |
+| DN-02 | **Decided** | PGlite local; Postgres remains production target. |
+| DN-03 | **Open, not blocking M2 code** | Private remote recommended for backup; first `npm test` does not need it. |
+| DN-04 | **Decided for M2** | No vendor keys. Adapters are C (M3+). |
+| DN-05 | **Decided** | Lean MVP ~32.5h. Previous 117.25h P0 is obsolete. |
 
 ## 9. Assumption review protocol
 

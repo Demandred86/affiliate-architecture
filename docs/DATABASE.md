@@ -1,6 +1,6 @@
 # DATABASE DESIGN
 
-Status: **M2 planning — awaiting approval**
+Status: **Target ERD approved.** M2 **migrates only** the lean table set in [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md).
 Date: 2026-08-25
 Related: [ARCHITECTURE.md](./ARCHITECTURE.md) · [AGENTS.md](./AGENTS.md) · [SCORING.md](./SCORING.md) · [ADR-0003](./ADR/ADR-0003-drizzle-over-prisma.md) · [ADR-0004](./ADR/ADR-0004-pglite-local-postgres-prod.md) · [ADR-0013](./ADR/ADR-0013-forward-only-migrations.md)
 
@@ -104,7 +104,11 @@ Rule: **never store a number with `source_type = MEASURED` unless a retrieval re
 
 Every table has `id uuid PK`, `created_at`, `updated_at` unless noted.
 
-### 5.1 M2 — migrated
+### 5.1 M2 — migrated (lean MVP)
+
+Per [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md): migrate **only** these families. `niche_alias`, `facet`, and `keyword_cluster_member` are required companions of `niche` / `keyword_facet` / `keyword_cluster`.
+
+Do **not** migrate `job`, `task`, `audit_event`, `human_review`, or `change_proposal` in M2. Human-approval **model** stays in docs; tables wait for M6/M9.
 
 #### `niche`
 
@@ -229,19 +233,23 @@ One current analysis per keyword (partial unique on `keyword_id` where `supersed
 
 #### `keyword_score`
 
+Engine scores. **Never** store M1 CSV numbers on this table.
+
 | Column | Type | Notes |
 |--------|------|-------|
 | `keyword_id` | uuid FK | |
+| `score_kind` | text | M2 writes **`OPPORTUNITY_SCORE` only**. **`SERP_SCORE` is M3** — no rows in M2 |
 | `model_id` | text | `opportunity-v1` |
 | `model_version` | text | `1.0.0` |
 | `score` | numeric(6,3) nullable | Null iff `INSUFFICIENT_DATA` |
-| `band` | `score_band` | |
+| `band` | `score_band` | Always `PROVISIONAL_*` in M2 |
 | `data_completeness` | numeric(4,3) | 0–1 |
 | `components` | jsonb | Named partials + weights |
-| `missing_inputs` | text[] | Declared absences, never filled |
-| `m1_hypothesis_score` | numeric nullable | Copied for side-by-side report only |
-| `agent_run_id` | uuid FK nullable | Formula runs still get an `agent_run` with `model=deterministic` |
+| `missing_inputs` | text[] | Must include volume/KD/SERP absences |
+| `agent_run_id` | uuid FK nullable | Formula runs: `model=deterministic` |
 | `superseded_at` | timestamptz nullable | |
+
+M1 CSV `opportunity_score` lives only on `keyword_metric` as `metric_name = M1_HYPOTHESIS_SCORE`, `source_type = HYPOTHESIS`. CSV `serp_opportunity` is `M1_HYPOTHESIS_SERP_LABEL`, **not** `SERP_SCORE`.
 
 #### `agent_prompt`
 
@@ -282,51 +290,17 @@ Unique `(agent_id, name, version)`.
 
 Append-only ledger: `agent_run_id`, `provider`, `model`, tokens, `estimated_cost_usd`, `occurred_at`. Summed for budget guards.
 
-#### `job`
-
-In-process queue persistence so a crash can resume.
-
-| Column | Type | Notes |
-|--------|------|-------|
-| `type` | text | `import` · `analyze-keyword` · `score-keyword` · `report` |
-| `payload` | jsonb | |
-| `status` | `job_status` | |
-| `attempts` | int | |
-| `last_error` | text nullable | |
-| `idempotency_key` | text unique | |
-
-#### `task`
-
-Mirrors `docs/tasks.csv` so agents and humans share status ([ASSUMPTIONS.md](./ASSUMPTIONS.md) SI-06).
-
-Columns match CSV: `external_id` (`M2-001`), `epic`, `milestone`, `title`, `description`, `dependencies`, `priority`, `estimated_hours`, `acceptance_criteria`, `validation_steps`, `double_check_steps`, `prompt_agent`, `automation_possible`, `human_action_required`, `status`, `checksum`.
-
-#### `audit_event`
-
-Append-only: `actor_type`, `actor_id`, `action`, `entity_type`, `entity_id`, `before` jsonb, `after` jsonb, `trace_id`. State changes (status transitions, prompt activation, score model activation) **must** write here. Application logs are not a substitute.
-
-#### `human_review` (M2 stub)
-
-Needed so the later gate does not require a rewrite. M2 seeds no reviews.
-
-| Column | Type | Notes |
-|--------|------|-------|
-| `subject_type` / `subject_id` | text / uuid | Polymorphic |
-| `decision` | text nullable | `APPROVED` · `REJECTED` · `CHANGES_REQUESTED` |
-| `reason` | text nullable | |
-| `reviewer` | text nullable | |
-| `decided_at` | timestamptz nullable | |
-
-#### `change_proposal` (M2 stub)
-
-Empty in M2; schema exists so M9 cannot silently mutate prompts. Fields: `reason`, `evidence`, `expected_improvement`, `affected_components`, `risk`, `rollback_strategy`, `status` (`DRAFT`/`APPROVED`/`REJECTED`/`APPLIED`).
-
 ### 5.2 DESIGN-ONLY (not migrated in M2)
 
 Created as documented sketches in this file and in `packages/database` README. First migration in the owning milestone.
 
 | Table | Milestone | Purpose |
 |-------|-----------|---------|
+| `job` | M3+ | Queue persistence (not needed for sequential CLI) |
+| `task` | later | Tracker sync; M2 uses `docs/tasks.csv` only |
+| `audit_event` | later | Extra audit log; M2 uses import + agent_run + cost_event |
+| `human_review` | M6 | Publish/review gate (model kept; table later) |
+| `change_proposal` | M9 | Prompt/formula changes (model kept; table later) |
 | `serp_query`, `serp_result`, `serp_feature`, `domain` | M3 | Retrieved SERP evidence; never claim a check without a row |
 | `product`, `product_variant`, `product_evidence`, `evidence_source` | M4 | Products and typed evidence (`FACT`/`CLAIM`/`OPINION`/`INFERENCE`/`USER_EXPERIENCE`) |
 | `content_brief` | M5 | Structured brief including “why this page deserves to exist” |
@@ -348,12 +322,10 @@ Column-level sketches for these tables live in [docs/DATABASE_FUTURE.md](./DATAB
 | `keyword` | `(niche_id, status)` | Active-niche pipeline |
 | `keyword_metric` | `(keyword_id, metric_name)` where current | Score inputs |
 | `keyword_analysis` | unique current per keyword | One live analysis |
-| `keyword_score` | unique current per `(keyword_id, model_id)` | One live score |
+| `keyword_score` | unique current per `(keyword_id, score_kind, model_id)` | One live OPPORTUNITY_SCORE |
 | `agent_run` | unique `idempotency_key` | Cache |
 | `import_batch` | `(file_sha256)` | Re-import |
 | `facet` | unique `slug` | Lexicon lookup |
-| `job` | `(status, created_at)` | Queue poll |
-| `task` | unique `external_id` | CSV sync |
 
 No speculative indexes. Explain plans when a query is slow.
 

@@ -1,55 +1,48 @@
 # OPPORTUNITY SCORING — MODEL v1
 
-Status: **M2 planning — awaiting approval**
+Status: **Target architecture approved.** M2 slice per [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md).
 Date: 2026-08-25
 Related: [DATABASE.md](./DATABASE.md) · [AGENTS.md](./AGENTS.md) · [M1_VALIDATION.md](./M1_VALIDATION.md)
 
-`MASTER_SPEC.md` §3: M1 opportunity scores are **research hypotheses**, not measurements. §10: never invent search volume. §31.10: M2 includes **basic** opportunity scoring.
+`MASTER_SPEC.md` §3: M1 opportunity scores are **research hypotheses**, not measurements. §10: never invent search volume.
 
 ---
 
-## 1. What v1 is and is not
+## 1. Three score families (do not conflate)
 
-**v1 is** a deterministic, versioned formula that:
+| Family | Storage | M2 |
+|--------|---------|----|
+| **`M1_HYPOTHESIS_SCORE`** | `keyword_metric.metric_name = M1_HYPOTHESIS_SCORE`, **`source_type = HYPOTHESIS`**, `source_name = m1-csv` | CSV column `opportunity_score`. Display only. **Never** an input to the formula. |
+| **`M1_HYPOTHESIS_SERP_LABEL`** | `keyword_metric` text `High`/`Medium`, `source_type = HYPOTHESIS` | CSV column `serp_opportunity`. **Not** `SERP_SCORE`. |
+| **`OPPORTUNITY_SCORE`** | `keyword_score.score_kind = OPPORTUNITY_SCORE`, model `opportunity-v1` | Deterministic analysis-only formula below. Band is always `PROVISIONAL_*`. |
+| **`SERP_SCORE`** | `keyword_score.score_kind = SERP_SCORE` | **M3.** No rows. Listed in `missing_inputs` as `serp_retrieved`. |
 
-- uses only fields that exist after import + keyword analysis;
-- **declares** every missing commercial-data input;
-- emits a **provisional** band so the first-batch experiment can be ordered;
-- stores M1 scores **beside** the model output for comparison, never as an input.
+Do **not** invent search volume, keyword difficulty, traffic, rankings, CPC, or revenue.
 
-**v1 is not** a forecast of traffic or revenue. Predicted traffic/revenue columns stay `UNAVAILABLE` until M3/M8 supply measurements. Do not print invented monthly-visit numbers in the M2 report.
+## 2. What `OPPORTUNITY_SCORE` v1 is and is not
 
-## 2. Inputs
+**Is:** a versioned formula using only import + keyword analysis fields; declares missing commercial inputs; orders the gardening batch provisionally.
+
+**Is not:** a traffic or revenue forecast. No monthly-visit numbers in the report.
+
+## 3. Inputs
 
 | Input | Source | Present in M2? |
 |-------|--------|----------------|
-| Pattern commerciality | `keyword_analysis.pattern_type` | Yes |
-| Intent | `keyword_analysis.intent_type` | Yes |
-| Specificity | facet count + qualifier present | Yes |
-| Cluster support | size of `keyword_cluster` | Yes |
-| Analysis confidence | `keyword_analysis.confidence` | Yes |
-| Niche active | `niche.status` | Yes |
-| Search volume | metric `search_volume` MEASURED | **No** |
-| Keyword difficulty | metric `kd` MEASURED | **No** |
-| CPC / AOV | metrics | **No** |
-| SERP opportunity (retrieved) | M3 `serp_query` | **No** |
-| M1 `opportunity_score` | metric HYPOTHESIS | Yes, **display only** |
-| M1 `serp_opportunity` | metric HYPOTHESIS | Yes, **display only** |
+| Pattern, intent, facets, cluster size, analysis confidence, niche active | `keyword_analysis` + cluster + niche | Yes |
+| Search volume, KD, CPC, AOV | MEASURED metrics | **No** |
+| Retrieved SERP | `SERP_SCORE` / `serp_query` | **No** |
+| `M1_HYPOTHESIS_SCORE` | metric HYPOTHESIS | Yes, **report only** |
 
-## 3. Formula `opportunity-v1` (1.0.0)
+## 4. Formula `opportunity-v1` (1.0.0)
 
 All component scores are 0–1. Weights sum to 1.
 
 ```
-specificity      = f(has_qualifier, facet_count, pattern_type)
-                   BEST_X_FOR_Y with qualifier → high
-                   BEST_ATTRIBUTE_X → medium-high
-                   OTHER → low
+specificity       = f(has_qualifier, facet_count, pattern_type)
 commercial_intent = COMMERCIAL_INVESTIGATION or TRANSACTIONAL → 1.0
-                   MIXED → 0.6
-                   INFORMATIONAL → 0.3
-                   UNKNOWN → 0.2
-cluster_support   = min(1, (cluster_size - 1) / 4)   # 5+ members → 1
+                    MIXED → 0.6; INFORMATIONAL → 0.3; UNKNOWN → 0.2
+cluster_support   = min(1, (cluster_size - 1) / 4)
 extraction_ok     = analysis.confidence
 niche_fit         = 1 if niche ACTIVE else 0
 
@@ -59,55 +52,38 @@ raw = 0.35 * specificity
     + 0.15 * extraction_ok
     + 0.05 * niche_fit
 
-data_completeness = 0.40
-  # analysis-only features are 40% of a “full” scorecard;
-  # volume, KD, SERP, economics are the remaining 60% and are missing.
+data_completeness = 0.40   # analysis-only; 60% is volume/KD/SERP/economics
 
-if niche_fit == 0:
-  band = PARKED implied via keyword.status PARKED; still compute raw for transparency
-elif data_completeness < 0.25:  # not reachable in v1 if analysis exists
-  band = INSUFFICIENT_DATA, score = null
-else:
-  score = round(raw * 100, 3)   # 0–100 scale for readability
-  band = PROVISIONAL_HIGH    if score >= 75
-         PROVISIONAL_MEDIUM  if score >= 55
-         PROVISIONAL_LOW     otherwise
+score = round(raw * 100, 3)
+band  = PROVISIONAL_HIGH | PROVISIONAL_MEDIUM | PROVISIONAL_LOW
 ```
 
-`missing_inputs` is always at least:
+`missing_inputs` always includes at least:
 
-```
-["search_volume", "keyword_difficulty", "cpc", "serp_retrieved", "aov_or_commission"]
-```
+`search_volume`, `keyword_difficulty`, `cpc`, `serp_retrieved` (i.e. future **SERP_SCORE**), `aov_or_commission`.
 
-Parked-niche keywords are scored but **excluded from the default first-batch report** (`--niche problem-solving-gardening`).
+Default report: `--niche problem-solving-gardening` only (10 keywords). Parked niches are imported, not the default report.
 
-## 4. Why M1 scores are not blended
+## 5. Why M1 is not blended
 
-Blending 88/100 hypotheses into v1 would make the “engine” a round-trip of the spreadsheet. The M2 report columns are:
+Blending CSV 70–88 into `OPPORTUNITY_SCORE` would round-trip the spreadsheet. Report columns:
 
-| Column | Meaning |
-|--------|---------|
-| `v1_score` | Formula above |
-| `v1_band` | Provisional band |
-| `data_completeness` | 0.40 in M2 |
-| `missing_inputs` | List |
-| `m1_opportunity_score` | Hypothesis, labelled as such |
-| `m1_serp_opportunity` | Hypothesis |
-| `rank_delta` | `m1_source_rank` vs v1 order **within niche** — informational, not a truth metric |
+| Column | Family |
+|--------|--------|
+| `opportunity_score` / `v1_score` | `OPPORTUNITY_SCORE` |
+| `m1_hypothesis_score` | `M1_HYPOTHESIS_SCORE` |
+| `m1_serp_label` | `M1_HYPOTHESIS_SERP_LABEL` |
+| `serp_score` | absent / `UNAVAILABLE` |
 
-A large delta is a **research question**, not a bug.
+A large delta vs M1 is a **research question**, not a test failure. **No test may assert `OPPORTUNITY_SCORE` equals the CSV number.**
 
-## 5. Versioning and change control
+## 6. Versioning
 
-- Formula lives in `packages/scoring` as pure functions + golden tests.
-- Active version recorded on every `keyword_score` row.
-- Changing weights requires a new `model_version` and, after M9, a `change_proposal`. M2 may ship v1.0.0 only.
+Formula in `packages/scoring`. `model_version` on every `keyword_score` row. Weight changes ⇒ new version (M9: `change_proposal` + human approval — table not in M2).
 
-## 6. Acceptance tests for scoring
+## 7. Scoring tests (M2)
 
-- All 10 gardening keywords produce non-null scores and `missing_inputs` containing `search_volume`.
-- Parked keywords are not in the default report.
-- Mutating an M1 hypothesis metric does **not** change `v1_score` (property test).
-- Fixture keyword with `intentType=UNKNOWN` and `patternType=OTHER` scores lower than `BEST_X_FOR_Y` + high confidence.
-- No test may assert that v1 equals the CSV `opportunity_score`.
+- Ten gardening keywords: non-null `OPPORTUNITY_SCORE`, `missing_inputs` contains `search_volume`.
+- `keyword_metric` for those rows: `M1_HYPOTHESIS_SCORE` + `source_type=HYPOTHESIS`.
+- Zero `SERP_SCORE` rows.
+- Mutating `M1_HYPOTHESIS_SCORE` does not change `OPPORTUNITY_SCORE`.

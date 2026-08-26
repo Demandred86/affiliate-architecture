@@ -1,8 +1,8 @@
 # COST-CONTROL STRATEGY
 
-Status: **M2 planning — awaiting approval**
+Status: **Target architecture approved.** M2 slice per [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md).
 Date: 2026-08-25
-Related: [AGENTS.md](./AGENTS.md) · [SECURITY.md](./SECURITY.md) · [ADR-0014](./ADR/ADR-0014-model-routing-budget.md)
+Related: [AGENTS.md](./AGENTS.md) · [SECURITY.md](./SECURITY.md) · [ADR-0014](./ADR/ADR-0014-model-routing-budget.md) · [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)
 
 Covers: cost-control strategy (7) per `MASTER_SPEC.md` §23–§24.
 
@@ -12,41 +12,45 @@ Covers: cost-control strategy (7) per `MASTER_SPEC.md` §23–§24.
 
 Every `agent_run` stores `model`, `input_tokens`, `output_tokens`, `estimated_cost_usd`, `duration_ms`. `cost_event` is append-only for sums.
 
-Price table lives in config (`MODEL_PRICES_JSON` or `packages/ai-provider/src/prices.ts`) with **retrieved-at** date. If a model has no price, cost is `UNAVAILABLE` (null) — **never a guessed average**.
+M2 runs are **deterministic** (`provider=none`, `model=deterministic`). Tokens and USD are **0**.
 
-Deterministic and mock runs record `$0` with `provider=none|mock`.
+If a model has no price, cost is `UNAVAILABLE` (null) — **never a guessed average**. M2 does not ship a vendor price table.
 
-## 2. Controls (cheapest first)
+## 2. Budget hierarchy (all three required)
 
-| Control | M2 behaviour |
-|---------|----------------|
-| Deterministic replacement | Keyword extract/cluster/score: no LLM if confidence ≥ 0.7 |
-| Cache / idempotency | Same input + versions ⇒ `CACHED`, no provider call |
-| Dedup import | Same file SHA-256 skips re-analysis unless `--force` |
-| Cheap vs strong routing | Fallback extractor uses `cheap` class only |
-| Temperature 0 | Extractors |
-| Max tokens cap | Small JSON objects |
-| Daily budget | `DAILY_BUDGET_USD` default `1.00`; exceed ⇒ `BUDGET_EXCEEDED`, no call |
-| Per-run cap | `MAX_COST_PER_RUN_USD` default `0.05` |
-| Expensive gate | `ALLOW_EXPENSIVE=false` by default; strong models refused |
-| Human gate | None required for M2 analysis; required before enabling paid providers in production use |
-| No hidden batches | CLI prints estimated remaining budget before paid calls if `> 0` keys configured |
+Config (Zod-validated env):
 
-## 3. Expected M2 spend
+| Variable | Default (M2) | Meaning |
+|----------|----------------|---------|
+| `MAX_COST_PER_RUN_USD` | `0.05` | Cap for a single `agent_run` |
+| `DAILY_BUDGET_USD` | `1.00` | Cap for calendar-day sum of `cost_event` |
+| `MAX_PROJECT_BUDGET_USD` | `5.00` | Cap for **lifetime** sum of `cost_event` in this database |
+
+Any pending call whose estimated cost would exceed **any** remaining cap is refused with `BUDGET_EXCEEDED` and **must not** call a provider.
+
+`ALLOW_EXPENSIVE` stays `false`. M2 has no paid provider wired, so the acceptance pipeline cannot spend money even if flags are mis-set — there is no adapter to call.
+
+## 3. Controls (cheapest first)
+
+| Control | M2 MVP |
+|---------|--------|
+| Deterministic replacement | Keyword extract/cluster/score: **no LLM path** |
+| Cache / idempotency | Same input + versions ⇒ reuse `agent_run`, `$0` |
+| Dedup import | Same file SHA-256 skips duplicate keywords unless `--force` |
+| Project / daily / per-run caps | Enforced before any future provider call |
+| Human gate | Required before enabling paid providers (not M2) |
+
+## 4. Expected M2 spend
 
 | Scenario | Expected |
 |----------|----------|
-| Acceptance run, mock + deterministic | **$0.00** |
-| 44 keywords, all high-confidence grammar | **$0.00** LLM |
-| Forced `--llm` on 44 short JSON calls, cheap model | typically **well under $2** (order-of-magnitude; not a quote) |
-| Strong model / high temperature / unconstrained prose | **Forbidden** by default flags |
+| Acceptance pipeline | **$0.00** (required) |
+| Cursor/AI **implementation** assistance | See [M2_PLAN.md](./M2_PLAN.md) § estimated Cursor cost — **not** billed through `cost_event` |
 
-These are **planning estimates**, not invoices. Actuals come from `cost_event`.
+## 5. Report
 
-## 4. Report
+Pipeline report includes `total_estimated_cost_usd` (must be `0`), `runs_by_status`, `cache_hits`, `llm_calls` (must be `0`).
 
-Pipeline report includes `total_estimated_cost_usd`, `runs_by_status`, `cache_hits`, `llm_calls`. CI golden fixture expects `0`.
+## 6. Later milestones
 
-## 5. Later milestones
-
-SERP and PA-API have their own unit costs — extend `cost_event` with `kind=api`. Writer/brief use strong models: require explicit budget increase + human confirmation the first time (`HUMAN` task in M5).
+Vendor adapters, price tables, SERP/PA-API `cost_event.kind=api`, and human confirmation before first paid writer run.

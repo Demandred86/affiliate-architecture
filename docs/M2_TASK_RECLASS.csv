@@ -1,0 +1,97 @@
+old_id,class,folded_into,notes
+H-001,B,,Relocate off OneDrive; not required for pipeline
+H-002,A,,Decided PGlite; no remaining hours
+H-003,B,,Git remote / backup
+H-004,C,,Vendor LLM keys
+M2-001,B,,Relocate workspace
+M2-002,A,M2-L01,Workspaces
+M2-003,A,M2-L01,TypeScript
+M2-004,B,,Full ESLint/Prettier; L01 only gitattributes LF
+M2-005,A,M2-L01,Vitest; no coverage ratchet
+M2-006,D,,Husky
+M2-007,B,,CI beyond npm test
+M2-008,B,,Push to remote
+M2-010,A,M2-L02,Config loader
+M2-011,A,M2-L02,Env validation without vendor adapters
+M2-012,A,M2-L02,Budgets including MAX_PROJECT_BUDGET_USD
+M2-020,A,M2-L03,JSON logs
+M2-021,B,,audit_event table
+M2-022,B,,Dedicated redaction suite
+M2-030,A,M2-L05,PGlite Drizzle
+M2-031,A,M2-L05,migrate
+M2-032,A,M2-L05,niche keyword
+M2-033,A,M2-L05,import tables
+M2-034,A,M2-L05,facet cluster analysis
+M2-035,A,M2-L05,metric score
+M2-036,A,M2-L05,agent_prompt agent_run cost_event only
+M2-037,C,,task audit human_review change_proposal
+M2-038,A,M2-L05,Minimal unique indexes
+M2-039,A,M2-L05,Seeds
+M2-040,A,M2-L06,Repositories
+M2-041,A,M2-L06,createTestDb
+M2-042,B,,Real Postgres parity
+M2-050,A,M2-L04,Provenance Zod
+M2-051,A,M2-L04,Import schemas
+M2-052,A,M2-L04,KeywordAnalysis Zod
+M2-053,A,M2-L04,Report Zod
+M2-054,A,M2-L04,Error codes
+M2-060,B,,Full AIProvider package
+M2-061,B,,MockProvider
+M2-062,C,,OpenAI adapter
+M2-063,C,,Anthropic adapter
+M2-064,C,,Price table
+M2-065,A,M2-L08,Budget guard
+M2-066,A,M2-L08,cost_event
+M2-070,A,M2-L07,AgentRunner
+M2-071,B,,Retry/repair loops
+M2-072,A,M2-L07,Idempotency
+M2-073,A,M2-L07,Prompt hash/version
+M2-074,B,,JobQueue
+M2-075,A,M2-L07,Persist runs
+M2-076,A,M2-L07,Failure mapping
+M2-080,A,M2-L09,Banned phrases
+M2-081,A,M2-L09,Numeric fabrication
+M2-082,B,,Untrusted wrapping for LLM
+M2-083,A,M2-L09,Fixtures
+M2-090,A,M2-L10,CSV parser
+M2-091,A,M2-L10,Import command
+M2-092,A,M2-L10,Normalize dedupe
+M2-093,A,M2-L10,Niche alias
+M2-094,A,M2-L10,M1_HYPOTHESIS_SCORE
+M2-095,A,M2-L10,File SHA-256
+M2-096,A,M2-L10,Reject bad rows
+M2-100,A,M2-L11,Agent contract
+M2-101,A,M2-L11,Pattern grammar
+M2-102,A,M2-L11,Facet lexicon
+M2-103,A,M2-L11,Intent slots
+M2-104,A,M2-L11,Clusters
+M2-105,A,M2-L11,Related candidates
+M2-106,C,,LLM fallback
+M2-107,A,M2-L11,Persist analysis
+M2-108,A,M2-L11;M2-L14,Agent tests
+M2-110,A,M2-L12,Formula v1
+M2-111,A,M2-L12,missing_inputs
+M2-112,A,M2-L12,M1 side-by-side
+M2-113,A,M2-L12,Persist scores
+M2-114,A,M2-L14,Scoring tests
+M2-115,A,M2-L12,Version stamp
+M2-120,A,M2-L13,CLI commands
+M2-121,A,M2-L13,pipeline
+M2-122,A,M2-L13,JSON+MD report; CSV report deferred
+M2-123,B,,Frozen golden bytes
+M2-124,A,M2-L01;M2-L13,Minimal README
+M2-130,B,,Extra unit sweep
+M2-131,A,M2-L14,Schema tests
+M2-132,A,M2-L14,Hallucination tests
+M2-133,B,,Large fixture pack
+M2-134,A,M2-L14,Integration pipeline
+M2-135,A,M2-L14,Idempotency
+M2-136,D,,Coverage gate
+M2-137,B,,Paid-API failure tests
+M2-140,D,,ase tasks sync
+M2-141,D,,CSV/DB checksum
+M2-142,B,,CONTRIBUTING; env.example in L02
+M2-150,A,M2-L15,Verification
+M2-151,A,M2-L15,Double-check
+M2-152,A,M2-L15,Closeout report
+M2-153,A,M2-L15,Stop wait for M3

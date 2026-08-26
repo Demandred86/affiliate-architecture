@@ -1,7 +1,7 @@
 # Architecture Decision Records
 
-Status: **M2 planning — awaiting approval**
-Date: 2026-08-25
+Status: **Target architecture approved.** M2 code waits on lean MVP plan ([ADR-0015](./ADR-0015-lean-m2-mvp.md)).
+Date: 2026-08-26
 
 ADRs record **why**, not the full design (that lives in ARCHITECTURE / DATABASE / AGENTS).
 
@@ -20,4 +20,5 @@ ADRs record **why**, not the full design (that lives in ARCHITECTURE / DATABASE 
 | [0011](./ADR-0011-structured-logging-pino.md) | pino JSON + audit table | Accepted |
 | [0012](./ADR-0012-secrets-env-not-committed.md) | Env secrets, fail closed per provider | Accepted |
 | [0013](./ADR-0013-forward-only-migrations.md) | Forward-only SQL migrations | Accepted |
-| [0014](./ADR-0014-model-routing-budget.md) | AIProvider + budgets + mock default | Accepted |
+| [0014](./ADR-0014-model-routing-budget.md) | AIProvider + budgets + mock default | Accepted (M2 slice: [0015](./ADR-0015-lean-m2-mvp.md)) |
+| [0015](./ADR-0015-lean-m2-mvp.md) | Lean M2 MVP (~32.5h slice) | **Accepted** |

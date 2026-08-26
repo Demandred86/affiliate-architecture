@@ -1,6 +1,6 @@
 # SYSTEM ARCHITECTURE
 
-Status: **M2 planning — awaiting approval**
+Status: **Target architecture approved.** M2 **implementation** is the lean slice in [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md) and [M2_PLAN.md](./M2_PLAN.md).
 Date: 2026-08-25
 Related: [MASTER_SPEC.md](./MASTER_SPEC.md) · [DATABASE.md](./DATABASE.md) · [AGENTS.md](./AGENTS.md) · [SCORING.md](./SCORING.md) · [SECURITY.md](./SECURITY.md) · [COST_CONTROL.md](./COST_CONTROL.md) · [ADR index](./ADR/README.md)
 

@@ -1,7 +1,7 @@
 # AGENT ARCHITECTURE
 
-Status: **M2 planning — awaiting approval**
-Date: 2026-08-25
+Status: **Target architecture approved.** M2 implements **deterministic keyword + scoring only** ([ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md)). No vendor LLM adapter in M2.
+Date: 2026-08-26
 Related: [ARCHITECTURE.md](./ARCHITECTURE.md) · [DATABASE.md](./DATABASE.md) · [SCORING.md](./SCORING.md) · [COST_CONTROL.md](./COST_CONTROL.md) · [ADR-0007](./ADR/ADR-0007-deterministic-first-agents.md) · [ADR-0014](./ADR/ADR-0014-model-routing-budget.md)
 
 Covers: agent architecture (3), contracts, runtime, keyword agent, future map.
@@ -12,7 +12,7 @@ Covers: agent architecture (3), contracts, runtime, keyword agent, future map.
 
 1. **Structured I/O only.** Each agent has Zod `input` and `output` schemas. Natural language is allowed *inside* a field, not as the inter-agent protocol (`MASTER_SPEC.md` §5, §9).
 2. **Deterministic first.** If a function can classify, extract, or score, it must. LLMs are a fallback for residue (`§23`, [ADR-0007](./ADR/ADR-0007-deterministic-first-agents.md)).
-3. **No silent mutation of production behaviour.** Prompt files are immutable once hashed into `agent_prompt`. Changes require a `change_proposal` (M9; schema stub in M2).
+3. **No silent mutation of production behaviour.** Prompt files are immutable once hashed into `agent_prompt`. Later, changes require a `change_proposal` (M9; **table not migrated in M2**).
 4. **Every run is an `agent_run` row** including formula-only runs (`model = deterministic`, cost `$0`).
 5. **Agents do not import other agents.** Composition is orchestration + database.
 6. **Untrusted text is data, never instructions.** CSV cells, titles, and snippets are wrapped in delimiters; the model is told to ignore directive-like content inside them.

@@ -1,78 +1,88 @@
-# M2 IMPLEMENTATION PLAN
+# M2 IMPLEMENTATION PLAN (LEAN MVP)
 
-Status: **M2 planning — awaiting approval. No production code until this document is approved.**
+Status: **Architecture approved. Implementation not started.** Scope: [ADR-0015](./ADR/ADR-0015-lean-m2-mvp.md).
 Date: 2026-08-25
-Related: [ARCHITECTURE.md](./ARCHITECTURE.md) · [TASKS.md](./TASKS.md) · [RUNBOOK.md](./RUNBOOK.md) · [ASSUMPTIONS.md](./ASSUMPTIONS.md)
+Related: [TASKS.md](./TASKS.md) · [RUNBOOK.md](./RUNBOOK.md) · [ASSUMPTIONS.md](./ASSUMPTIONS.md)
 
-Covers: proposed M2 implementation sequence (15). **Do not start M3.**
+**Do not start M3. Do not write production code until this lean plan is accepted.**
 
 ---
 
-## 1. Gate: what “approved” means
+## 1. What M2 must prove
 
-Implementation starts only after you confirm:
+```
+CSV → import → database → keyword analysis → deterministic OPPORTUNITY_SCORE → report
+```
 
-1. Architecture (layers, CLI-only, PGlite, no Redis/web in M2)
-2. ERD and M2 vs future tables
-3. Agent + scoring approach (deterministic first, provisional scores)
-4. Task list and **143.5h** CSV envelope (P0 **117.25h**) — or an explicit cut list
-5. Decisions DN-01 (path), DN-02 (PGlite), DN-03 (remote) — or explicit “stay on OneDrive”
+First successful run: **no paid LLM/API calls**, `cost_event` total **$0**.
 
-Out of this gate: production TypeScript, migrations, npm packages.
+Keep: Postgres-as-target, PGlite local, Drizzle, Zod, agent contracts, provenance, idempotency, audit via import/agent_run/cost_event, guardrails, prompt/agent versioning, human-approval **model** (no publish, no review table).
 
-## 2. Sequence (waves)
+## 2. Waves (lean)
 
-Work left-to-right. Items in a wave can proceed in parallel after their deps.
+| Wave | Tasks | Exit |
+|------|-------|------|
+| 1 | M2-L01–L04 | Repo + config + schemas + logs |
+| 2 | M2-L05–L09 | PGlite schema + runner + budgets + guardrails |
+| 3 | M2-L10–L13 | Import, analyze, score, CLI report |
+| 4 | M2-L14–L15 | `npm test` + acceptance pipeline + **STOP** |
 
-| Wave | Name | Tasks | Exit criterion |
-|------|------|-------|----------------|
-| 0 | Decisions | H-001–H-003 | Path + DB runtime + remote chosen |
-| 1 | Foundation | M2-001–M2-005, M2-008 | `npm test` placeholder; first commit |
-| 2 | Platform | M2-010–012, 020–022, 050–054 | Config boots; schemas compile |
-| 3 | Persistence | M2-030–041 | migrate+seed on PGlite; test DB |
-| 4 | Agent platform | M2-060–061, 065–066, 070, 072, 074–076, 080–081, 083 | Mock runner + guardrails unit tests |
-| 5 | Capability | M2-090–096, 100–105, 107–108, 110–115 | Import 44; analyse 10; score v1 |
-| 6 | Delivery | M2-120–123, 131–132, 134–135 | `ase pipeline` golden |
-| 7 | Closeout | M2-150–153 | RUNBOOK V+D; **STOP** |
+Critical path: `L01 → L02 → L04 → L05 → L06 → L07 → L10 → L11 → L12 → L13 → L14 → L15` (~27.5h on path). L03, L08, L09 have slack.
 
-P1 (CI, vendor LLMs, parity, task sync) may start after Wave 1 (CI) or after Wave 6; they are **not** required to enter Wave 7 if P0 acceptance already holds. P0 in the CSV is **117.25h** of granular tickets — Wave 3 can still ship as a small number of PRs.
+## 3. Effort
 
-## 3. Daily implementation rule
+**32.5 engineering hours** (inside 20–35). The old **117.25h P0 is obsolete.**
 
-For each task: implement → tests in the same change → run the task’s validation cell → only then `DONE`.
+## 4. Exact M2 acceptance test
 
-Never claim the pipeline works without [RUNBOOK.md](./RUNBOOK.md) V2–V8.
+From a clean install, **no `.env` API keys**:
 
-## 4. Explicit non-goals (will not appear in M2 PRs)
+```text
+npm install
+npm test
+npx ase db migrate
+npx ase db seed
+npx ase pipeline --file docs/M1_TOP50_keyword_shortlist.csv --niche problem-solving-gardening --out reports/m2-acceptance
+```
 
-- SERP fetch, product APIs, writer, WordPress, Next.js app, Redis, Prisma, Python
-- Publishing without human approval (not even drafts to WP)
-- Replacing M1 hypothesis scores with invented volume
+**Pass if and only if:**
 
-## 5. After M2 (preview only)
+1. Exit code 0.
+2. `npm test` green (unit + one integration pipeline).
+3. Database has **44** keywords; report lists **exactly 10** gardening first-batch keywords.
+4. Each of the 10 has `keyword_analysis` (`BEST_X_FOR_Y` or `BEST_ATTRIBUTE_X` for `best lightweight garden tools`).
+5. Each of the 10 has `keyword_score.score_kind = OPPORTUNITY_SCORE` with `missing_inputs` containing `search_volume`.
+6. Each of the 10 has `keyword_metric` `M1_HYPOTHESIS_SCORE` with **`source_type = HYPOTHESIS`**.
+7. **Zero** rows with `score_kind = SERP_SCORE`. Report does not present CSV scores as measured SEO data.
+8. Report `total_estimated_cost_usd === 0` and `llm_calls === 0`.
+9. Second pipeline without `--force` does not duplicate keywords (idempotent).
+10. Guardrail tests reject `we tested` and a number not present in input.
+11. No `serp_*` / product / article tables migrated.
 
-M3 = SERP agent + provider adapter + `serp_*` migrations. Starts only after your approval of M2 closeout (`MASTER_SPEC.md` §34).
+## 5. Estimated Cursor / AI cost
 
-## 6. Document index created in this planning phase
+Not `cost_event` (that stays $0).
 
-| File | Role |
-|------|------|
-| [ASSUMPTIONS.md](./ASSUMPTIONS.md) | Facts, gaps, DN-* |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Architecture, repo, tech, dependency graph |
-| [DATABASE.md](./DATABASE.md) | ERD + M2 catalog |
-| [DATABASE_FUTURE.md](./DATABASE_FUTURE.md) | M3–M9 sketches |
-| [AGENTS.md](./AGENTS.md) | Agent map + keyword contract |
-| [SCORING.md](./SCORING.md) | opportunity-v1 |
-| [SECURITY.md](./SECURITY.md) | Threat model |
-| [COST_CONTROL.md](./COST_CONTROL.md) | Budgets |
-| [API.md](./API.md) | CLI contracts |
-| [ADR/](./ADR/README.md) | Decisions 0001–0014 |
-| [TASKS.md](./TASKS.md) | Breakdown, AC, hours |
-| [tasks.csv](./tasks.csv) | Tracker import |
-| [RUNBOOK.md](./RUNBOOK.md) | Verify + double-check |
-| [RISKS.md](./RISKS.md) | Risks |
-| This file | Sequence + stop |
+| Item | Estimate | Notes |
+|------|----------|--------|
+| Pipeline LLM APIs | **$0** | Required |
+| Cursor agent to **implement** ~32.5h of TS | **roughly $20–80 USD** of Cursor usage | Depends on model/plan, retries, context. **Not a quote.** |
+| If a paid coding model is used heavily | same band; could exceed $80 if loops | Stop and simplify rather than add adapters |
 
-## 7. Waiting for you
+Human review of PRs: unpriced.
 
-Reply with approval (and DN-01–03) or requested changes. Until then, **no production code.**
+## 6. Remaining human decisions
+
+| ID | Blocking code? | Action |
+|----|----------------|--------|
+| DN-01 OneDrive | No | Recommended: move repo; else exclude `node_modules`/`data` |
+| DN-03 git remote | No | Recommended backup |
+| Approve this lean plan | **Yes** | Then implementation may start |
+
+## 7. Deferred / removed (summary)
+
+See [TASKS.md](./TASKS.md) B/C/D. Includes: CI beyond `npm test`, Docker, Redis, HTTP, Next.js, OpenAI/Anthropic/Mock LLM, PG parity, task-DB sync, JobQueue, `audit_event`, golden CSV report, coverage ratchet, LLM fallback.
+
+## 8. Stop
+
+After M2-L15: milestone note, **wait**. No M3.
