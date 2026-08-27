@@ -1,0 +1,1 @@
+{"version":3,"file":"site-config.d.ts","sourceRoot":"","sources":["../../../../apps/site/src/site-config.ts"],"names":[],"mappings":"AAAA;;;GAGG;AACH,eAAO,MAAM,UAAU;aACrB,QAAQ,EAAE,iCAAiC;aAC3C,kBAAkB,EAAE,6BAA6B;aACjD,mBAAmB,EACjB,mMAAmM;aACrM,SAAS;iBACP,iBAAiB,EAAE,EAAE;iBACrB,+BAA+B,EAAE,EAAE;iBACnC,KAAK,EACH,uHAAuH;;aAE3H,WAAW,EAAE,uCAAuC;CAC5C,CAAC"}
