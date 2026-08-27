@@ -1,0 +1,123 @@
+[
+  {
+    "id": "src-okatsune-europe-101",
+    "name": "Okatsune Europe — Okatsune 101 product page",
+    "sourceType": "manufacturer",
+    "url": "https://okatsune-europe.com/en/product/pruning-shears-okatsune-101/",
+    "claimsSupported": [
+      "Okatsune 101 length 180 mm",
+      "Okatsune 101 weight 177 g",
+      "Okatsune 101 cutting capacity 25 mm",
+      "Positioned for smaller hand"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-okatsune-uk-hand-guide",
+    "name": "Okatsune UK — How to choose secateur size",
+    "sourceType": "manufacturer",
+    "url": "https://www.okatsune.co.uk/blogs/news/how-to-choose-the-right-size-secateurs-for-your-hands",
+    "claimsSupported": [
+      "Okatsune 101 hand length 16–18.5 cm",
+      "Okatsune 101 palm width 7–8.5 cm"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-okatsune-uk-101",
+    "name": "Okatsune UK — Secateurs 101",
+    "sourceType": "manufacturer",
+    "url": "https://www.okatsune.co.uk/products/secateurs-101",
+    "claimsSupported": ["Okatsune 101 weight listed as 180 g (retailer/manufacturer variant)"],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-felco-14",
+    "name": "FELCO — FELCO 14 product page",
+    "sourceType": "manufacturer",
+    "url": "https://www.felco.com/products/felco-14",
+    "claimsSupported": [
+      "FELCO 14 hand size Small",
+      "FELCO 14 length 180 mm",
+      "FELCO 14 weight 190 g",
+      "FELCO 14 cutting capacity 18 mm",
+      "Right-handed",
+      "Lifetime warranty on forged aluminum handles"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-gardeners-world-felco-14",
+    "name": "BBC Gardeners' World — Felco No 14 review",
+    "sourceType": "independent",
+    "url": "https://www.gardenersworld.com/reviews/tools/pruning/felco-no-14-bypass-secateurs-review/",
+    "claimsSupported": [
+      "Independent assessment: light and comfortable for smaller hands",
+      "18 mm cutting width in use",
+      "Replaceable parts and lifetime warranty noted",
+      "Safety catch stiff; struggled with thicker cuts"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-darlac-dp930",
+    "name": "Darlac — DP930 Small Bypass Pruner",
+    "sourceType": "manufacturer",
+    "url": "https://darlac.com/product/dp930-small-bypass-pruner/",
+    "claimsSupported": [
+      "DP930 length 175 mm",
+      "DP930 cutting capacity 16 mm",
+      "Designed for small hands / slim handles",
+      "Weight 146 g in primary product copy",
+      "WooCommerce weight field shows 178 g — CONFLICT"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-darlac-spec-pdf",
+    "name": "Darlac Product Specification 2021 (PDF)",
+    "sourceType": "manufacturer",
+    "url": "https://darlac.com/wp-content/uploads/2021/01/Darlac-Product-Specification-2021.pdf",
+    "claimsSupported": ["DP930 weight 146 g", "DP930 length 175 mm", "DP930 cut capacity 16 mm"],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-felco-15",
+    "name": "FELCO — FELCO 15 product page",
+    "sourceType": "manufacturer",
+    "url": "https://www.felco.com/products/felco-15",
+    "claimsSupported": [
+      "FELCO 15 hand size Small",
+      "FELCO 15 length 189 mm",
+      "FELCO 15 weight 252.5 g",
+      "FELCO 15 cutting capacity 18 mm",
+      "Rotating handle",
+      "Manufacturer claim: up to 30% reduction in cutting force"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-felco-6",
+    "name": "FELCO — FELCO 6 product page",
+    "sourceType": "manufacturer",
+    "url": "https://www.felco.com/products/felco-6",
+    "claimsSupported": [
+      "FELCO 6 hand size Medium (M)",
+      "FELCO 6 length 195 mm",
+      "FELCO 6 weight 219 g",
+      "FELCO 6 cutting capacity 20 mm"
+    ],
+    "checkedAt": "2026-08-26"
+  },
+  {
+    "id": "src-sprout-authority-pruners",
+    "name": "Sprout Authority — Best pruning shears by hand fit",
+    "sourceType": "independent",
+    "url": "https://sproutauthority.com/gear/best-pruning-shears",
+    "claimsSupported": [
+      "Third-party editorial: FELCO 14 for small right hand",
+      "Third-party editorial: match handle span before comparing price"
+    ],
+    "checkedAt": "2026-08-26"
+  }
+]

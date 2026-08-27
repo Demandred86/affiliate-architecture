@@ -1,0 +1,364 @@
+[
+  {
+    "id": "okatsune101",
+    "name": "Okatsune 101",
+    "brand": "Okatsune",
+    "model": "101",
+    "recommendationLabel": "Best overall for genuinely small hands (editorial)",
+    "handSize": {
+      "value": "Small / smaller hand (manufacturer positioning)",
+      "source": "src-okatsune-europe-101",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "manufacturer_claim",
+      "notes": "Okatsune hand guide: 16–18.5 cm length, 7–8.5 cm palm width (src-okatsune-uk-hand-guide)"
+    },
+    "lengthMm": {
+      "value": 180,
+      "source": "src-okatsune-europe-101",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "weightG": {
+      "value": 177,
+      "min": 177,
+      "max": 180,
+      "source": "src-okatsune-europe-101; src-okatsune-uk-101",
+      "sourceType": "manufacturer",
+      "confidence": "medium",
+      "claimKind": "fact",
+      "status": "verify",
+      "notes": "Okatsune Europe lists 177 g; Okatsune UK shop lists 180 g. Shown as approx. 177–180 g."
+    },
+    "cuttingCapacityMm": {
+      "value": 25,
+      "source": "src-okatsune-europe-101",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "mechanism": "Bypass (Sentei Basami)",
+    "dexterity": "Ambidextrous (manufacturer: usable left or right)",
+    "keyFeatures": [
+      "Izumo Yasugi steel blades (manufacturer)",
+      "Compact 180 mm body",
+      "Published 25 mm max cut diameter",
+      "V-spring design (manufacturer)"
+    ],
+    "bestFor": "Gardeners with genuinely small hands who want the most compact Okatsune model and highest published cut capacity in this group.",
+    "limitations": [
+      "Right-hand-centric market positioning in some regions; verify feel if you are left-handed",
+      "Japanese steel blades require proper sharpening technique (manufacturer warns about bolt adjustment)",
+      "We did not hands-on test fit or cutting performance"
+    ],
+    "whyWeLikeIt": [
+      "Okatsune explicitly positions the 101 as the most compact of its three secateur sizes",
+      "Published 25 mm capacity exceeds FELCO 14/15 on paper",
+      "Manufacturer publishes hand measurement ranges for model 101"
+    ],
+    "whoShouldBuy": "Shoppers whose hand measurements fall near Okatsune's 101 guideline and who prioritize compact size and rated cutting capacity.",
+    "whoShouldSkip": "Users who need Swiss-style service networks, rotating handles, or verified lightweight budget options.",
+    "sources": ["src-okatsune-europe-101", "src-okatsune-uk-hand-guide", "src-okatsune-uk-101"],
+    "affiliate": {
+      "status": "not_verified",
+      "retailers": []
+    },
+    "evidenceConfidence": "high"
+  },
+  {
+    "id": "felco14",
+    "name": "FELCO 14",
+    "brand": "FELCO",
+    "model": "14",
+    "recommendationLabel": "Best premium / serviceable option (editorial)",
+    "handSize": {
+      "value": "Small (S)",
+      "source": "src-felco-14",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "lengthMm": {
+      "value": 180,
+      "source": "src-felco-14",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "weightG": {
+      "value": 190,
+      "source": "src-felco-14",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact",
+      "notes": "FELCO lists 0.19 kg (190 g) net weight"
+    },
+    "cuttingCapacityMm": {
+      "value": 18,
+      "source": "src-felco-14",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "mechanism": "Bypass",
+    "dexterity": "Right-handed",
+    "keyFeatures": [
+      "Hardened steel blades (manufacturer)",
+      "Forged aluminum handles",
+      "Replaceable parts",
+      "Lifetime warranty on forged aluminum handles (manufacturer terms apply)",
+      "Wire-cutting notch and sap groove (Gardeners' World)"
+    ],
+    "bestFor": "Small-handed gardeners who want a premium, serviceable bypass pruner with strong independent recognition.",
+    "limitations": [
+      "18 mm rated capacity—lower than Okatsune 101 or FELCO 6 on paper",
+      "Gardeners' World noted a stiff safety catch and struggle on thicker stems in their testing",
+      "Right-handed only",
+      "Premium price tier"
+    ],
+    "whyWeLikeIt": [
+      "FELCO officially classifies the 14 as Small at 180 mm",
+      "Gardeners' World independently reviewed it as light and comfortable for smaller hands",
+      "Strong serviceability story: replaceable parts and maintenance service"
+    ],
+    "whoShouldBuy": "Buyers investing in a long-term tool who fit FELCO Small and prioritize build quality over maximum rated cut diameter.",
+    "whoShouldSkip": "Left-handed users, budget-first shoppers, or anyone regularly cutting stems near 20 mm+ without upgrading capacity.",
+    "sources": ["src-felco-14", "src-gardeners-world-felco-14", "src-sprout-authority-pruners"],
+    "affiliate": {
+      "status": "not_verified",
+      "retailers": []
+    },
+    "priceObservations": [
+      {
+        "price": 74.71,
+        "currency": "USD",
+        "retailer": "FELCO US (observed previously)",
+        "market": "US",
+        "checkedAt": "2026-08-26",
+        "source": "User research input — VERIFY before display",
+        "note": "Time-sensitive; not shown as current price on MVP page"
+      }
+    ],
+    "evidenceConfidence": "high"
+  },
+  {
+    "id": "darlacDp930",
+    "name": "Darlac DP930",
+    "brand": "Darlac",
+    "model": "DP930",
+    "recommendationLabel": "Best lightweight / small-hand alternative (editorial)",
+    "handSize": {
+      "value": "Small hands / slim profile handles (manufacturer positioning)",
+      "source": "src-darlac-dp930",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "manufacturer_claim"
+    },
+    "lengthMm": {
+      "value": 175,
+      "source": "src-darlac-dp930",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "weightG": {
+      "value": 146,
+      "min": 146,
+      "max": 178,
+      "source": "src-darlac-dp930; src-darlac-spec-pdf",
+      "sourceType": "manufacturer",
+      "confidence": "low",
+      "claimKind": "fact",
+      "status": "conflict",
+      "notes": "Primary copy and PDF list 146 g; Darlac product page WooCommerce field lists 178 g; some retailers list 145–170 g. VERIFY before citing a single number."
+    },
+    "cuttingCapacityMm": {
+      "value": 16,
+      "source": "src-darlac-dp930",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "mechanism": "Bypass",
+    "keyFeatures": [
+      "Forged aluminium body (manufacturer)",
+      "PTFE-coated carbon steel blade",
+      "Tension adjustment",
+      "Replaceable blade (retailer listings)",
+      "Slim handles for smaller grips"
+    ],
+    "bestFor": "Budget-conscious gardeners with small hands who want a lightweight bypass pruner for light pruning.",
+    "limitations": [
+      "Lowest cutting capacity in this comparison (16 mm)",
+      "Weight data CONFLICT across manufacturer fields—verify on a current listing or scale",
+      "Less premium service ecosystem than FELCO",
+      "No independent lab test cited here"
+    ],
+    "whyWeLikeIt": [
+      "Shortest tool in the group at 175 mm per Darlac",
+      "Explicitly marketed for small hands with slim handles",
+      "Manufacturer PDF aligns with 146 g when the on-page conflict is ignored"
+    ],
+    "whoShouldBuy": "Light-duty pruners with small hands who prioritize handle slimness and lower cost over maximum capacity or premium service.",
+    "whoShouldSkip": "Anyone regularly cutting thick stems, or shoppers who need a verified exact weight before purchase.",
+    "sources": ["src-darlac-dp930", "src-darlac-spec-pdf"],
+    "affiliate": {
+      "status": "not_verified",
+      "retailers": []
+    },
+    "evidenceConfidence": "medium"
+  },
+  {
+    "id": "felco15",
+    "name": "FELCO 15",
+    "brand": "FELCO",
+    "model": "15",
+    "recommendationLabel": "Best rotating-handle option (editorial)",
+    "handSize": {
+      "value": "Small (S)",
+      "source": "src-felco-15",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "lengthMm": {
+      "value": 189,
+      "source": "src-felco-15",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "weightG": {
+      "value": 252.5,
+      "min": 252,
+      "max": 254,
+      "source": "src-felco-15",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact",
+      "notes": "FELCO lists 252.5 g net; user research cited 252–254 g range"
+    },
+    "cuttingCapacityMm": {
+      "value": 18,
+      "source": "src-felco-15",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "mechanism": "Bypass with rotating handle",
+    "dexterity": "Right-handed",
+    "keyFeatures": [
+      "Revolving handle (manufacturer)",
+      "Rubber shock absorbers (manufacturer)",
+      "Angled cutting head",
+      "Micrometer-adjustable blade"
+    ],
+    "bestFor": "Small-handed users who want FELCO build quality with a rotating handle to spread cutting force.",
+    "limitations": [
+      "Heaviest Small FELCO in this list (~252.5 g)",
+      "18 mm capacity same as FELCO 14",
+      "Premium price",
+      "Rotating-handle force reduction is a manufacturer claim—not independently verified here"
+    ],
+    "whyWeLikeIt": [
+      "FELCO positions the 15 for smaller hand sizes with ergonomic rotating handle",
+      "Useful when wrist fatigue matters more than minimum weight"
+    ],
+    "whoShouldBuy": "Ergonomic-focused pruners with small hands doing extended sessions who accept extra weight for the rotating grip.",
+    "whoShouldSkip": "Shoppers wanting the lightest tool, left-handed users, or anyone satisfied with a fixed-handle FELCO 14.",
+    "editorialNotes": [
+      "FELCO says the rotating handle can reduce the cutting force required by up to 30%—a manufacturer claim, not an independent test result on this page."
+    ],
+    "sources": ["src-felco-15"],
+    "affiliate": {
+      "status": "not_verified",
+      "retailers": []
+    },
+    "priceObservations": [
+      {
+        "price": 96.21,
+        "currency": "USD",
+        "retailer": "FELCO US (observed previously)",
+        "market": "US",
+        "checkedAt": "2026-08-26",
+        "source": "User research input — VERIFY before display",
+        "note": "Time-sensitive; not shown as current price on MVP page"
+      }
+    ],
+    "evidenceConfidence": "high"
+  },
+  {
+    "id": "felco6",
+    "name": "FELCO 6",
+    "brand": "FELCO",
+    "model": "6",
+    "recommendationLabel": "Best for small-to-medium hands / higher capacity (editorial)",
+    "handSize": {
+      "value": "Medium (M) — FELCO current classification",
+      "source": "src-felco-6",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact",
+      "notes": "Third-party articles sometimes mention suitability for smaller hands seeking capacity; we do not override FELCO Medium label."
+    },
+    "lengthMm": {
+      "value": 195,
+      "source": "src-felco-6",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "weightG": {
+      "value": 219,
+      "source": "src-felco-6",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "cuttingCapacityMm": {
+      "value": 20,
+      "source": "src-felco-6",
+      "sourceType": "manufacturer",
+      "confidence": "high",
+      "claimKind": "fact"
+    },
+    "mechanism": "Bypass",
+    "dexterity": "Right-handed",
+    "keyFeatures": [
+      "20 mm cutting diameter—highest in this FELCO pair comparison",
+      "Forged aluminum handles",
+      "Replaceable parts",
+      "Lifetime warranty on forged aluminum handles (manufacturer terms apply)"
+    ],
+    "bestFor": "Users with small-to-medium hands who want more FELCO cutting capacity without jumping to large-hand models.",
+    "limitations": [
+      "Not classified as Small by FELCO—195 mm may feel long for very small hands",
+      "Heavier than FELCO 14",
+      "Right-handed"
+    ],
+    "whyWeLikeIt": [
+      "Highest published cutting capacity among FELCO models here (20 mm)",
+      "Strong manufacturer spec sheet and widespread independent recommendations for general-purpose FELCO quality"
+    ],
+    "whoShouldBuy": "Gardeners whose hands are at the upper end of small or into medium range who prioritize capacity and FELCO serviceability.",
+    "whoShouldSkip": "Very small hands that match Okatsune 101 guidelines or FELCO Small without needing extra reach.",
+    "sources": ["src-felco-6", "src-sprout-authority-pruners"],
+    "affiliate": {
+      "status": "not_verified",
+      "retailers": []
+    },
+    "priceObservations": [
+      {
+        "price": 79.92,
+        "currency": "USD",
+        "retailer": "FELCO US (observed previously)",
+        "market": "US",
+        "checkedAt": "2026-08-26",
+        "source": "User research input — VERIFY before display",
+        "note": "Time-sensitive; not shown as current price on MVP page"
+      }
+    ],
+    "evidenceConfidence": "high"
+  }
+]
