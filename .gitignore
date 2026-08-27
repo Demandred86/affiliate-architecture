@@ -8,3 +8,4 @@ reports/
 *.log
 !apps/site/data/
 !apps/site/data/**
+dist/
