@@ -82,6 +82,7 @@ export interface ArticleMeta {
     h1: string;
     seoTitle: string;
     metaDescription: string;
+    /** Documentation default only. Live canonical is SITE_URL + /{slug}/ at build time. */
     canonicalPlaceholder: string;
     openGraph: {
         title: string;
