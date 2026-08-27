@@ -1,0 +1,84 @@
+{
+  "slug": "best-pruning-shears-for-small-hands",
+  "primaryKeyword": "best pruning shears for small hands",
+  "title": "Best Pruning Shears for Small Hands: 5 Models Compared by Fit, Weight & Cutting Capacity",
+  "h1": "Best Pruning Shears for Small Hands: 5 Models Compared by Fit, Weight & Cutting Capacity",
+  "seoTitle": "Best Pruning Shears for Small Hands (5 Compared) | Fit, Weight & Capacity",
+  "metaDescription": "Compare Okatsune 101, FELCO 14, Darlac DP930, FELCO 15, and FELCO 6 using manufacturer specs and independent sources. Editorial picks for small hands—no hands-on testing claimed.",
+  "canonicalPlaceholder": "https://YOUR-DOMAIN.example/best-pruning-shears-for-small-hands/",
+  "openGraph": {
+    "title": "Best Pruning Shears for Small Hands: 5 Models Compared",
+    "description": "Evidence-backed comparison of compact pruning shears for smaller hands. Specs, trade-offs, and an editorial hand-size guide."
+  },
+  "quickAnswers": [
+    {
+      "label": "Best overall for genuinely small hands",
+      "productId": "okatsune101",
+      "claimKind": "editorial"
+    },
+    {
+      "label": "Best premium / serviceable option",
+      "productId": "felco14",
+      "claimKind": "editorial"
+    },
+    {
+      "label": "Best rotating-handle option",
+      "productId": "felco15",
+      "claimKind": "editorial"
+    },
+    {
+      "label": "Best lightweight / small-hand alternative",
+      "productId": "darlacDp930",
+      "claimKind": "editorial"
+    },
+    {
+      "label": "Best for small-to-medium hands / higher capacity",
+      "productId": "felco6",
+      "claimKind": "editorial"
+    }
+  ],
+  "faq": [
+    {
+      "question": "What are the best pruning shears for small hands?",
+      "answer": "Based on published specifications and independent write-ups—not hands-on testing by us—Okatsune 101 is our editorial pick for genuinely small hands because Okatsune positions it as the most compact model and publishes a hand-measurement guide. FELCO 14 is our premium small-hand pick with strong serviceability. Your best choice still depends on hand measurements, cutting needs, and budget."
+    },
+    {
+      "question": "How do I know if pruning shears are too big for my hand?",
+      "answer": "If you cannot comfortably reach the safety catch, the handles force your fingers to stretch at full open, or the tool feels top-heavy, the grip is likely too large. Measure hand length (middle fingertip to wrist) and palm width, then compare against manufacturer sizing guidance. Okatsune publishes ranges for model 101; FELCO labels models Small, Medium, or Large."
+    },
+    {
+      "question": "Is FELCO 6 good for small hands?",
+      "answer": "FELCO currently classifies the FELCO 6 as Medium hand size—not Small. Some independent articles still recommend it for users who want more cutting capacity in a relatively compact FELCO body. We position it for small-to-medium hands or users prioritizing 20 mm capacity over the smallest possible grip."
+    },
+    {
+      "question": "Is FELCO 14 smaller than FELCO 6?",
+      "answer": "Yes on published dimensions: FELCO lists the 14 at 180 mm and Small, versus the 6 at 195 mm and Medium. Cutting capacity is also lower on the 14 (18 mm vs 20 mm). Neither is universally better—the 14 prioritizes compact fit; the 6 prioritizes capacity."
+    },
+    {
+      "question": "Are lightweight pruning shears better for small hands?",
+      "answer": "Lower weight often reduces fatigue during long pruning sessions, but fit matters more than weight alone. A lightweight tool with oversized handles can still feel awkward. Darlac DP930 is positioned as lightweight for small hands, though published weight figures conflict across sources—verify before buying."
+    },
+    {
+      "question": "What size pruning shears should I use?",
+      "answer": "Start with hand measurements and the manufacturer's hand-size label. For Okatsune, their guide suggests model 101 for roughly 16–18.5 cm hand length and 7–8.5 cm palm width. FELCO provides a downloadable hand-sizing chart for rotating-handle models. Treat these as manufacturer guidelines, not medical standards."
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "okatsune-vs-felco14",
+      "title": "Okatsune 101 vs FELCO 14",
+      "paragraphs": [
+        "Both target smaller hands, but they represent different philosophies. Okatsune 101 is the shorter tool (180 mm per Okatsune) with higher published cutting capacity (25 mm) and lighter stated weight (approximately 177–180 g depending on source). FELCO 14 is also 180 mm but FELCO rates it at 18 mm capacity and about 190 g, with Swiss-made replaceable parts and a lifetime warranty on forged aluminum handles.",
+        "Our editorial take: choose Okatsune 101 if maximum compactness and cutting diameter on paper matter most for very small hands. Choose FELCO 14 if long-term serviceability, independent recognition (including Gardeners' World), and a premium bypass mechanism matter more than the extra millimeters of rated capacity."
+      ]
+    },
+    {
+      "id": "felco6-vs-felco14",
+      "title": "FELCO 6 vs FELCO 14",
+      "paragraphs": [
+        "FELCO's current product data positions the 14 as Small (180 mm, 18 mm cut, ~190 g) and the 6 as Medium (195 mm, 20 mm cut, ~219 g). The 6 is not a Small model in FELCO's sizing chart even though third-party guides sometimes mention it for gardeners who want more capacity without moving to large-hand models.",
+        "Trade-off summary: the 14 is the more compact, lighter FELCO for small hands; the 6 adds cutting capacity and reach at the cost of size and weight. Neither wins on every job—match the tool to your hand measurements and typical branch thickness."
+      ]
+    }
+  ]
+}

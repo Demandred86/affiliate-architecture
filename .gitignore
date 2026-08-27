@@ -7,3 +7,5 @@ coverage/
 data/
 reports/
 *.log
+!apps/site/data/
+!apps/site/data/**
