@@ -8,17 +8,46 @@ const dataDir = join(siteRoot, "data");
 const publicDir = join(siteRoot, "public");
 const distDir = join(siteRoot, "dist");
 
+function applyDotEnv(filePath) {
+  try {
+    const text = readFileSync(filePath, "utf8");
+    for (const line of text.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (process.env[key] === undefined) {
+        process.env[key] = value;
+      }
+    }
+  } catch {
+    // .env is optional; SITE_URL falls back to https://example.com
+  }
+}
+
+applyDotEnv(join(siteRoot, "..", "..", ".env"));
+
 const products = JSON.parse(readFileSync(join(dataDir, "products.json"), "utf8"));
 const sources = JSON.parse(readFileSync(join(dataDir, "sources.json"), "utf8"));
 const article = JSON.parse(readFileSync(join(dataDir, "article.json"), "utf8"));
+const affiliateLinks = JSON.parse(readFileSync(join(dataDir, "affiliate-links.json"), "utf8"));
 
-const affiliateLinks = {
-  okatsune101: { amazonUS: "", retailerUS: "" },
-  felco14: { amazonUS: "", retailerUS: "" },
-  darlacDp930: { amazonUS: "", retailerUS: "" },
-  felco15: { amazonUS: "", retailerUS: "" },
-  felco6: { amazonUS: "", retailerUS: "" },
-};
+function resolveSiteUrl() {
+  const raw = (process.env.SITE_URL ?? "https://example.com").trim();
+  return (raw || "https://example.com").replace(/\/+$/, "");
+}
+
+const siteUrl = resolveSiteUrl();
+const articlePath = `/${article.slug}/`;
+const canonicalUrl = `${siteUrl}${articlePath}`;
 
 const affiliateDisclosure =
   "Some links on this page may be affiliate links. If you buy through them, we may earn a commission at no additional cost to you. Affiliate relationships have not been verified for this MVP page.";
@@ -218,11 +247,11 @@ const html = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(article.seoTitle)}</title>
   <meta name="description" content="${escapeHtml(article.metaDescription)}">
-  <link rel="canonical" href="${escapeHtml(article.canonicalPlaceholder)}">
+  <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="${escapeHtml(article.openGraph.title)}">
   <meta property="og:description" content="${escapeHtml(article.openGraph.description)}">
-  <meta property="og:url" content="${escapeHtml(article.canonicalPlaceholder)}">
+  <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
   <!-- Analytics placeholder: insert Google Search Console verification / GA4 when ready -->
   <link rel="stylesheet" href="../css/styles.css">
   <style>.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
@@ -339,4 +368,23 @@ cpSync(join(dataDir, "products.json"), join(distDir, "data", "products.json"));
 cpSync(join(dataDir, "sources.json"), join(distDir, "data", "sources.json"));
 cpSync(join(dataDir, "article.json"), join(distDir, "data", "article.json"));
 
+const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: ${siteUrl}/sitemap.xml
+`;
+
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${escapeHtml(canonicalUrl)}</loc>
+  </url>
+</urlset>
+`;
+
+writeFileSync(join(distDir, "robots.txt"), robotsTxt, "utf8");
+writeFileSync(join(distDir, "sitemap.xml"), sitemapXml, "utf8");
+
 console.log("Site built:", join(distDir, "best-pruning-shears-for-small-hands", "index.html"));
+console.log("SITE_URL:", siteUrl);
+console.log("Canonical:", canonicalUrl);

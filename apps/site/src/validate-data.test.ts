@@ -40,6 +40,21 @@ describe("M2.5 product data validation", () => {
     }
   });
 
+  it("keeps affiliate-links.json as the URL store with empty or https values", () => {
+    const links = JSON.parse(
+      readFileSync(join(dataDir, "affiliate-links.json"), "utf8"),
+    ) as Record<string, { amazonUS: string; retailerUS: string }>;
+    const ids = products.map((p: { id: string }) => p.id);
+    expect(Object.keys(links).sort()).toEqual([...ids].sort());
+    for (const entry of Object.values(links)) {
+      for (const url of [entry.amazonUS, entry.retailerUS]) {
+        if (url.trim()) {
+          expect(url).toMatch(/^https:\/\//);
+        }
+      }
+    }
+  });
+
   it("uses real source URLs only", () => {
     for (const source of sources) {
       expect(source.url).toMatch(/^https:\/\//);

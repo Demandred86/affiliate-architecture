@@ -1,7 +1,3 @@
-/**
- * Affiliate link configuration. Empty URLs must not render as clickable CTAs.
- * Replace placeholders after Amazon Associates / retailer approval (HUMAN task).
- */
 export interface AffiliateLinkEntry {
     amazonUS: string;
     retailerUS: string;

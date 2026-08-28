@@ -1,34 +1,28 @@
 /**
- * Affiliate link configuration. Empty URLs must not render as clickable CTAs.
- * Replace placeholders after Amazon Associates / retailer approval (HUMAN task).
+ * Affiliate helpers. URLs live in apps/site/data/affiliate-links.json
+ * (single source of truth for the static build). Empty URLs must not
+ * render as clickable CTAs. Replace placeholders after program approval
+ * (HUMAN task). Do not invent Amazon or other affiliate URLs.
  */
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 export interface AffiliateLinkEntry {
   amazonUS: string;
   retailerUS: string;
 }
 
-export const affiliateLinks: Record<string, AffiliateLinkEntry> = {
-  okatsune101: {
-    amazonUS: "",
-    retailerUS: "",
-  },
-  felco14: {
-    amazonUS: "",
-    retailerUS: "",
-  },
-  darlacDp930: {
-    amazonUS: "",
-    retailerUS: "",
-  },
-  felco15: {
-    amazonUS: "",
-    retailerUS: "",
-  },
-  felco6: {
-    amazonUS: "",
-    retailerUS: "",
-  },
-};
+const affiliateLinksPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "data",
+  "affiliate-links.json",
+);
+
+export const affiliateLinks: Record<string, AffiliateLinkEntry> = JSON.parse(
+  readFileSync(affiliateLinksPath, "utf8"),
+);
 
 export const AFFILIATE_LINK_PENDING = "AFFILIATE_LINK_PENDING";
 

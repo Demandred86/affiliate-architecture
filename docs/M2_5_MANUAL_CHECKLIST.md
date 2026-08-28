@@ -36,8 +36,7 @@ Use this after `npm run build:site` to prepare the first article for real traffi
 - [ ] Create Amazon Associates account (or approved retailer program)
 - [ ] Confirm each product is eligible for your program/market
 - [ ] Obtain real affiliate URLs for: Okatsune 101, FELCO 14, Darlac DP930, FELCO 15, FELCO 6
-- [ ] Edit `apps/site/src/affiliate-links.ts` with verified URLs
-- [ ] Mirror URLs in `apps/site/scripts/build.mjs` `affiliateLinks` object (or refactor to import shared config in a later task)
+- [ ] Edit `apps/site/data/affiliate-links.json` with verified URLs (single source of truth; rebuild the site after)
 - [ ] Rebuild site; confirm CTAs are clickable and use `rel="nofollow sponsored"`
 - [ ] Update affiliate disclosure text if relationships are confirmed
 
@@ -55,8 +54,8 @@ Use this after `npm run build:site` to prepare the first article for real traffi
 
 - [ ] Register domain
 - [ ] Deploy `apps/site/dist/` to static host (Netlify, Cloudflare Pages, S3, etc.)
-- [ ] Set canonical URL in `article.json` (replace `YOUR-DOMAIN.example`)
-- [ ] Rebuild after canonical change
+- [ ] Set `SITE_URL` to the real origin (see `docs/M2_5_DEPLOYMENT.md`); do not leave `https://example.com`
+- [ ] Rebuild after `SITE_URL` change
 - [ ] Add Google Search Console property; submit sitemap/URL
 - [ ] Add GA4 or privacy-compliant analytics in `site-config.ts` / HTML placeholder
 - [ ] Validate structured data with Google Rich Results Test
