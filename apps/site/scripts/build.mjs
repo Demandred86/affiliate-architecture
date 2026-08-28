@@ -75,6 +75,35 @@ function sourceById(id) {
   return sources.find((s) => s.id === id);
 }
 
+function isManufacturerProductPage(source) {
+  if (!source?.url || source.sourceType !== "manufacturer") return false;
+  if (/\.pdf(\?|#|$)/i.test(source.url)) return false;
+  if (/\/blogs\//i.test(source.url)) return false;
+  return true;
+}
+
+function verifiedOfferUrl(product) {
+  const links = affiliateLinks[product.id];
+  const affiliateUrl = (links?.amazonUS || "").trim() || (links?.retailerUS || "").trim();
+  if (affiliateUrl) return affiliateUrl;
+
+  for (const sid of product.sources) {
+    const source = sourceById(sid);
+    if (isManufacturerProductPage(source)) return source.url;
+  }
+  return undefined;
+}
+
+function buildProductOffer(product) {
+  // Google requires offers, review, or aggregateRating on Product.
+  // No verified current price, currency, or availability exists in the dataset
+  // (priceObservations are explicitly VERIFY / not current). Omit those fields.
+  const offer = { "@type": "Offer" };
+  const url = verifiedOfferUrl(product);
+  if (url) offer.url = url;
+  return offer;
+}
+
 function renderCta(productId) {
   const links = affiliateLinks[productId];
   const url = links?.amazonUS?.trim() || links?.retailerUS?.trim();
@@ -222,6 +251,7 @@ function buildStructuredData() {
         brand: { "@type": "Brand", name: p.brand },
         description: p.bestFor,
         sku: p.model,
+        offers: buildProductOffer(p),
       },
     })),
   };
