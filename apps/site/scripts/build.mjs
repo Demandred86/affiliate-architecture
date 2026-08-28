@@ -259,9 +259,6 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <p>Evidence-backed gardening gear guides · M2.5 MVP · No hands-on testing claimed on this page</p>
-  </header>
   <main id="main">
     <article>
       <h1>${escapeHtml(article.h1)}</h1>
